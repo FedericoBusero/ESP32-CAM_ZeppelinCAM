@@ -341,7 +341,6 @@ void setup()
   // Connect to wifi
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-#endif
 
   // Wait some time to connect to wifi
   for (int i = 0; i < 15 && WiFi.status() != WL_CONNECTED; i++) {
@@ -356,6 +355,8 @@ void setup()
   DEBUG_SERIAL.println("WiFi connected");
   DEBUG_SERIAL.println("IP address: ");
   DEBUG_SERIAL.println(WiFi.localIP());   // You can get IP address assigned to ESP
+#endif
+
 #endif
 
   webserver.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
