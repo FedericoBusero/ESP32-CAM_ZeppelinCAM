@@ -239,7 +239,10 @@ function setTranslate(xPos, yPos, el) {
 }
 
 function showValue(v) {
-  send('2:'+v+',0');
+  if (ws.readyState !== WebSocket.OPEN) {
+    return;
+  }
+  ws.send('2:'+v+',0');
 }
 
 </script>
