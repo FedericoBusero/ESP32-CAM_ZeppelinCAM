@@ -210,6 +210,9 @@ function send(txt) {
        clearTimeout(sendTimeout);
        sendTimeout = null;
     }
+    if (ws.readyState !== WebSocket.OPEN) {
+      return;
+    }
     if(lastSend === undefined || now - lastSend >= min_time_transmit) {
         try {
             ws.send(txt);
