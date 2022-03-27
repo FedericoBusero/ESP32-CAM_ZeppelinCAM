@@ -233,9 +233,9 @@ function send(txt) {
 
 function setTranslate(xPos, yPos, el) {
     el.style.transform = 'translate3d(' + xPos + 'px, ' + yPos + 'px, 0)';
-    var panDegrees = xPos * 90 / (container.offsetWidth / 2);
-    var tiltDegrees = yPos * 90 / (container.offsetHeight / 2);
-    send('1:'+Math.round(panDegrees) + ',' + Math.round(tiltDegrees));
+    var xval = xPos * 90 / (container.offsetWidth / 2);
+    var yval = yPos * 90 / (container.offsetHeight / 2);
+    send('1:'+Math.round(xval) + ',' + Math.round(yval));
 }
 
 function showValue(v) {
