@@ -112,7 +112,7 @@ figure img{
     <div id="stream-container" class="image-container"> <img id="stream" src=""> </div>
   </figure>
 <br/>
-<input type="range" min="0" max="360" value="0" step="1" class="slider-color" oninput="showValue(this.value)" />
+<input type="range" min="0" max="360" value="0" step="1" class="slider-color" oninput="showValue(2,this.value)" />
 <br>
   <div id='container'>
     <div id='item'> </div>
@@ -237,11 +237,11 @@ function setTranslate(xPos, yPos, el) {
     send('1:'+Math.round(xval) + ',' + Math.round(yval));
 }
 
-function showValue(v) {
+function showValue(id,v) {
   if (ws.readyState !== WebSocket.OPEN) {
     return;
   }
-  ws.send('2:'+v+',0');
+  ws.send(id+':'+v+',0');
 }
 
 </script>
