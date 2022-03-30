@@ -21,6 +21,11 @@
 const char ssid[] = "ZeppelinCAM";
 const char password[] = "12345678";
 
+#ifdef USE_SOFTAP
+#include <DNSServer.h>
+DNSServer dnsServer;
+#endif
+
 #include "zeppelincam_html.h" // Do not put html code in ino file to avoid problems with the preprocessor
 
 #ifdef USE_CAMERA
@@ -333,10 +338,14 @@ void setup()
   /* set up access point */
   WiFi.mode(WIFI_AP);
   WiFi.softAP(ssid, password);
+  IPAddress apIP = WiFi.softAPIP();
 #ifdef DEBUG_SERIAL
   DEBUG_SERIAL.print("IP: ");
-  DEBUG_SERIAL.println(WiFi.softAPIP());
+  DEBUG_SERIAL.println(apIP);
 #endif
+  /* Setup the DNS server redirecting all the domains to the apIP */
+  dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
+  dnsServer.start(53, "*", apIP);
 #else
   // Connect to wifi
   WiFi.mode(WIFI_STA);
@@ -439,6 +448,10 @@ void loop()
 {
   static unsigned long millis_last = 0;
 
+#if defined(USE_SOFTAP)
+  dnsServer.processNextRequest();
+#endif
+   
   if (millis() > last_activity + TIMEOUT_MS)
   {
 
