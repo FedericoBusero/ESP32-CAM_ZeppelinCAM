@@ -393,10 +393,10 @@ void handleJoystick(int x, int y)
   DEBUG_SERIAL.print(" y=");
   DEBUG_SERIAL.println(y);
 #endif
-  servo_angle = map(x, -90, 90, 35, 135);
+  servo_angle = map(x, -180, 180, 35, 135);
 
-  currentspeedLR = map(x, -90, 90, -PWMRANGE, PWMRANGE);
-  currentspeedforward = constrain(map(y, 90, -90, -PWMRANGE, PWMRANGE),0,PWMRANGE);
+  currentspeedLR = map(x, -180, 180, -PWMRANGE, PWMRANGE);
+  currentspeedforward = constrain(map(y, 180, -180, -PWMRANGE, PWMRANGE),0,PWMRANGE);
   updateMotors();
 }
 
