@@ -131,6 +131,8 @@ ws.onmessage = message => {
   }
 };
 
+const joystickfactor = 2.8;
+
 var dragItem = document.querySelector('#item');
 var container = document.querySelector('#container');
 var active = false;
@@ -185,11 +187,21 @@ function drag(e) {
             currentX = e.clientX - initialX;
             currentY = e.clientY - initialY;
         }
+        if (currentY >= (container.offsetHeight / joystickfactor))  {
+            currentY = container.offsetHeight / joystickfactor;
+        }
+        if (currentY <= (-container.offsetHeight / joystickfactor))  {
+            currentY = -container.offsetHeight / joystickfactor;
+        }
+        if (currentX >= (container.offsetWidth / joystickfactor))  {
+            currentX = container.offsetWidth / joystickfactor;
+        }
+        if (currentX <= (-container.offsetWidth / joystickfactor))  {
+            currentX = -container.offsetWidth / joystickfactor;
+        }
         xOffset = currentX;
         yOffset = currentY;
-        if (Math.abs(currentY) < (container.offsetHeight / 2) && Math.abs(currentX) < (container.offsetWidth / 2)) {
-            setTranslate(currentX, currentY, dragItem);
-        }
+        setTranslate(currentX, currentY, dragItem);
         document.getElementById('area').value = 'X: ' + currentX + ' Y: ' + currentY;
     }
 }
@@ -232,8 +244,8 @@ function send(txt) {
 
 function setTranslate(xPos, yPos, el) {
     el.style.transform = 'translate3d(' + xPos + 'px, ' + yPos + 'px, 0)';
-    var xval = xPos * 180 / (container.offsetWidth / 2);
-    var yval = yPos * 180 / (container.offsetHeight / 2);
+    var xval = xPos * 180 / (container.offsetWidth / joystickfactor);
+    var yval = yPos * 180 / (container.offsetHeight / joystickfactor);
     send('1:'+Math.round(xval) + ',' + Math.round(yval));
 }
 
