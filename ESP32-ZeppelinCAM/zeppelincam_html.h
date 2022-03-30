@@ -39,11 +39,6 @@ const uint8_t index_html[] PROGMEM = R"=====(
      cursor: pointer;
      border-width: 20px;
 }
- #area {
-     position: fixed;
-     right: 0;
-     top: 0;
-}
 
 figure{
      width: 100%;
@@ -174,7 +169,6 @@ function dragEnd(e) {
     initialY = currentY;
     active = false;
     setTranslate(currentX, currentY, dragItem);
-    document.getElementById('area').value = 'X: ' + currentX + ' Y: ' + currentY;
 }
 
 function drag(e) {
@@ -202,7 +196,6 @@ function drag(e) {
         xOffset = currentX;
         yOffset = currentY;
         setTranslate(currentX, currentY, dragItem);
-        document.getElementById('area').value = 'X: ' + currentX + ' Y: ' + currentY;
     }
 }
 
