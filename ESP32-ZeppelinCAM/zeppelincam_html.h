@@ -115,10 +115,25 @@ figure img{
 </div>
 
 <script>
+var retransmitInterval;
 const view = document.getElementById('stream');
 const WS_URL = "ws://" + window.location.host + ":82";
 const ws = new WebSocket(WS_URL);
     
+ws.onopen = function() {
+    retransmitInterval=setInterval(() => {
+      ws.send("0");
+    }, 1000);
+};
+
+ws.onclose = function() {
+    if (retransmitInterval)    
+    {        
+      clearInterval(retransmitInterval);        
+      retransmitInterval = null;     
+    }
+};
+
 ws.onmessage = message => {
   if (message.data instanceof Blob) {
     var urlObject = URL.createObjectURL(message.data);
