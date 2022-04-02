@@ -18,7 +18,7 @@
 
 #define USE_SOFTAP
 
-const char ssid[] = "ZeppelinCAM";
+const char ssid[] = "BlimpCam-";
 const char password[] = "12345678";
 
 #ifdef USE_SOFTAP
@@ -334,19 +334,35 @@ void setup()
   analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_NO_CONNECTION ); // LED_BUILTIN
 
   // Wifi setup
+  uint8_t macAddr[6];
+  WiFi.macAddress(macAddr);
 #if defined(USE_SOFTAP)
   /* set up access point */
   WiFi.mode(WIFI_AP);
-  WiFi.softAP(ssid, password);
+
+   char ssidmac[33];
+  sprintf(ssidmac, "%s%02X%02X", ssid, macAddr[4], macAddr[5]); // ssidmac = ssid + 4 hexadecimal values of MAC address
+  WiFi.softAP(ssidmac, password);
   IPAddress apIP = WiFi.softAPIP();
 #ifdef DEBUG_SERIAL
+  DEBUG_SERIAL.print(F("SoftAP SSID="));
+  DEBUG_SERIAL.println(ssidmac);
   DEBUG_SERIAL.print("IP: ");
   DEBUG_SERIAL.println(apIP);
 #endif
   /* Setup the DNS server redirecting all the domains to the apIP */
   dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer.start(53, "*", apIP);
-#else
+#else // USE_SOFTAP not defined
+  // host_name = "BlimpCam-" + 6 hexadecimal values of MAC address
+  char host_name[33];
+  sprintf(host_name, "BlimpCam-%02X%02X%02X", macAddr[3], macAddr[4], macAddr[5]);
+#ifdef DEBUG_SERIAL
+  DEBUG_SERIAL.print("Hostname: ");
+  DEBUG_SERIAL.println(host_name);
+#endif
+  WiFi.setHostname(host_name);
+
   // Connect to wifi
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -360,13 +376,11 @@ void setup()
   }
 
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.println("");
-  DEBUG_SERIAL.println("WiFi connected");
-  DEBUG_SERIAL.println("IP address: ");
+  DEBUG_SERIAL.print("\nWiFi connected - IP address: ");
   DEBUG_SERIAL.println(WiFi.localIP());   // You can get IP address assigned to ESP
 #endif
 
-#endif
+#endif // USE_SOFTAP
 
   webserver.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
     AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", index_html, sizeof(index_html));
