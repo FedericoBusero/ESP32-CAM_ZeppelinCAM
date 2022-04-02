@@ -136,8 +136,8 @@ void analogwrite_attach(uint8_t pin, int channel)
   ledcSetup(channel, ANALOGWRITE_FREQUENCY, ANALOGWRITE_RESOLUTION); //channel, freq, resolution
   ledcAttachPin(pin, channel); // pin, channel
 #ifdef DEBUG_SERIAL
-  Serial.print("AnalogWrite: PWMRANGE=");
-  Serial.println(PWMRANGE);
+  DEBUG_SERIAL.print("AnalogWrite: PWMRANGE=");
+  DEBUG_SERIAL.println(PWMRANGE);
 #endif
 }
 
