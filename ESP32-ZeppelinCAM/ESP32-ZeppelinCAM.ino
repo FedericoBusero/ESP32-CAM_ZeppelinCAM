@@ -512,5 +512,5 @@ void loop()
     init_values();
     updateMotors();
   }
-  delay(20); // een lange delay is mogelijk want handleMessage blijft parallel binnenlopen
+  delay(2); 
 }
