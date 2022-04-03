@@ -141,7 +141,7 @@ void analogwrite_attach(uint8_t pin, int channel)
   ledcSetup(channel, ANALOGWRITE_FREQUENCY, ANALOGWRITE_RESOLUTION); //channel, freq, resolution
   ledcAttachPin(pin, channel); // pin, channel
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.print("AnalogWrite: PWMRANGE=");
+  DEBUG_SERIAL.print(F("AnalogWrite: PWMRANGE="));
   DEBUG_SERIAL.println(PWMRANGE);
 #endif
 }
@@ -183,13 +183,13 @@ void updateMotors()
   {
 /*
 #ifdef DEBUG_SERIAL
-    DEBUG_SERIAL.print("updateMotors servo_angle=");
+    DEBUG_SERIAL.print(F("updateMotors servo_angle="));
     DEBUG_SERIAL.print(servo_angle);
-    DEBUG_SERIAL.print(" currentspeedforward=");
+    DEBUG_SERIAL.print(F(" currentspeedforward="));
     DEBUG_SERIAL.print(currentspeedforward);
-    DEBUG_SERIAL.print(" currentspeedLR=");
+    DEBUG_SERIAL.print(F(" currentspeedLR="));
     DEBUG_SERIAL.print(currentspeedLR);
-    DEBUG_SERIAL.print(" up_pwm_value=");
+    DEBUG_SERIAL.print(F(" up_pwm_value="));
     DEBUG_SERIAL.print(up_pwm_value);
     DEBUG_SERIAL.println();
 #endif
@@ -295,7 +295,7 @@ void setup()
 {
 #ifdef DEBUG_SERIAL
   DEBUG_SERIAL.begin(115200);
-  DEBUG_SERIAL.println("ZeppelinCAM started");
+  DEBUG_SERIAL.println(F("ZeppelinCAM started"));
 #endif
 
   // forward motor PWM
@@ -327,8 +327,6 @@ void setup()
 
   camera_init();
 
-  // analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_NO_CONNECTION ); 
-
   // Wifi setup
   uint8_t macAddr[6];
   WiFi.macAddress(macAddr);
@@ -343,7 +341,7 @@ void setup()
 #ifdef DEBUG_SERIAL
   DEBUG_SERIAL.print(F("SoftAP SSID="));
   DEBUG_SERIAL.println(ssidmac);
-  DEBUG_SERIAL.print("IP: ");
+  DEBUG_SERIAL.print(F("IP: "));
   DEBUG_SERIAL.println(apIP);
 #endif
   /* Setup the DNS server redirecting all the domains to the apIP */
@@ -354,7 +352,7 @@ void setup()
   char host_name[33];
   sprintf(host_name, "BlimpCam-%02X%02X%02X", macAddr[3], macAddr[4], macAddr[5]);
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.print("Hostname: ");
+  DEBUG_SERIAL.print(F("Hostname: "));
   DEBUG_SERIAL.println(host_name);
 #endif
   WiFi.setHostname(host_name);
@@ -366,15 +364,13 @@ void setup()
   // Wait some time to connect to wifi
   for (int i = 0; i < 15 && WiFi.status() != WL_CONNECTED; i++) {
 #ifdef DEBUG_SERIAL
-    DEBUG_SERIAL.print(".");
+    DEBUG_SERIAL.print('.');
 #endif
     delay(1000);
   }
 
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.println("");
-  DEBUG_SERIAL.println("WiFi connected");
-  DEBUG_SERIAL.println("IP address: ");
+  DEBUG_SERIAL.print(F("\nWiFi connected - IP address: "));
   DEBUG_SERIAL.println(WiFi.localIP());   // You can get IP address assigned to ESP
 #endif
 
@@ -389,7 +385,7 @@ void setup()
   webserver.begin();
   server.listen(82);
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.print("Is server live? ");
+  DEBUG_SERIAL.print(F("Is server live? "));
   DEBUG_SERIAL.println(server.available());
 #endif
   last_activity_message = millis();
@@ -398,7 +394,7 @@ void setup()
 void handleSlider(int value)
 {
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.print("handleSlider value=");
+  DEBUG_SERIAL.print(F("handleSlider value="));
   DEBUG_SERIAL.println(value);
 #endif
   up_pwm_value = map(value, 0, 360, 0, PWMRANGE);
@@ -409,9 +405,9 @@ void handleSlider(int value)
 void handleJoystick(int x, int y)
 {
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.print("handleJoystick x=");
+  DEBUG_SERIAL.print(F("handleJoystick x="));
   DEBUG_SERIAL.print(x);
-  DEBUG_SERIAL.print(" y=");
+  DEBUG_SERIAL.print(F(" y="));
   DEBUG_SERIAL.println(y);
 #endif
   servo_angle = map(x, -180, 180, 35, 135);
@@ -424,19 +420,19 @@ void handleJoystick(int x, int y)
 void onEventsCallback(WebsocketsEvent event, String data) {
   if (event == WebsocketsEvent::ConnectionOpened) {
 #ifdef DEBUG_SERIAL
-    DEBUG_SERIAL.println("Connnection Opened");
+    DEBUG_SERIAL.println(F("Connnection Opened"));
 #endif
   } else if (event == WebsocketsEvent::ConnectionClosed) {
 #ifdef DEBUG_SERIAL
-    DEBUG_SERIAL.println("Connnection Closed");
+    DEBUG_SERIAL.println(F("Connnection Closed"));
 #endif
   } else if (event == WebsocketsEvent::GotPing) {
 #ifdef DEBUG_SERIAL
-    DEBUG_SERIAL.println("Got a Ping!");
+    DEBUG_SERIAL.println(F("Got a Ping!"));
 #endif
   } else if (event == WebsocketsEvent::GotPong) {
 #ifdef DEBUG_SERIAL
-    DEBUG_SERIAL.println("Got a Pong!");
+    DEBUG_SERIAL.println(F("Got a Pong!"));
 #endif
     analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_HANDLEMESSAGE); 
     last_activity_message = millis();
@@ -453,8 +449,8 @@ void handle_message(WebsocketsMessage msg) {
 
 
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.println("");
-  DEBUG_SERIAL.print("handle_message ");
+  DEBUG_SERIAL.println();
+  DEBUG_SERIAL.print(F("handle_message "));
   DEBUG_SERIAL.println(msg.data());
 #endif
 
@@ -478,7 +474,6 @@ void handle_message(WebsocketsMessage msg) {
     case 2: handleSlider(param1);
       break;
   }
-  // analogwrite_channel(CHANNEL_ANALOGWRITE_LED, 0); 
 }
 
 void motors_pause()
@@ -592,7 +587,7 @@ void loop()
     init_motors();
     sclient = server.accept();
 #ifdef DEBUG_SERIAL
-    DEBUG_SERIAL.println("Connection accept");
+    DEBUG_SERIAL.println(F("Connection accept"));
 #endif
     sclient.onMessage(handle_message);
     sclient.onEvent(onEventsCallback); // run callback when events are occuring
