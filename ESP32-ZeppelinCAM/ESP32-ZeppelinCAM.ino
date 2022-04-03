@@ -84,9 +84,7 @@ const int upPin = 15;  // Up Pin
 const int hbridgePinA = 13; // H-bridge pin A
 const int hbridgePinB = 14; // H-bridge pin B
 
-// #define PIN_LED LED_BUILTIN
 #define PIN_LED 4
-// #define PIN_LED 33
 
 int currentspeedforward;
 int currentspeedLR;
