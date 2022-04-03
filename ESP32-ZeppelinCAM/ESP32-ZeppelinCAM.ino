@@ -15,7 +15,6 @@
 
 // const char* ssid = "NSA"; //Enter SSID
 // const char* password = "Orange"; //Enter Password
-
 #define USE_SOFTAP
 
 const char ssid[] = "BlimpCam-";
@@ -58,9 +57,11 @@ WebsocketsClient sclient;
 // video streaming setting
 #define MIN_TIME_PER_FRAME 200 // minimum time between video frames in ms e.g. minimum 200ms means max 5fps
 
-// Safety shutdown
-#define TIMEOUT_MS 90000L // motors will go to power off position after x milliseconds of inactivity
-long last_activity;
+// timeoutes
+#define TIMEOUT_MS_MOTORS 2500L // Safety shutdown: motors will go to power off position after x milliseconds no message received
+#define TIMEOUT_MS_LED 1L        // LED will light up for x milliseconds after message received
+
+long last_activity_message;
 
 // Motor pin allocation
 // Lijken te werken: 2, 12, 13, 14, 15
@@ -83,22 +84,26 @@ const int upPin = 15;  // Up Pin
 const int hbridgePinA = 13; // H-bridge pin A
 const int hbridgePinB = 14; // H-bridge pin B
 
-#ifndef LED_BUILTIN // TODO bug rapporteren in Arduino board definitie
-#define LED_BUILTIN 4
-#endif
+// #define PIN_LED LED_BUILTIN
+#define PIN_LED 4
+// #define PIN_LED 33
 
 int currentspeedforward;
 int currentspeedLR;
 int servo_angle;
 int up_pwm_value;
 
+bool motors_halt;
+
 #define ANALOGWRITE_FREQUENCY 1000
 #define ANALOGWRITE_RESOLUTION LEDC_TIMER_12_BIT // LEDC_TIMER_8_BIT
 #define PWMRANGE ((1<<ANALOGWRITE_RESOLUTION)-1) // LEDC_TIMER_12_BIT=> 4095; ANALOGWRITE_RANGE LEDC_TIMER_8_BIT => 255
 
-#define LED_BRIGHTNESS_NO_CONNECTION  1
-#define LED_BRIGHTNESS_HANDLEMESSAGE  1
-#define LED_BRIGHTNESS_BOOT          10
+#define LED_BRIGHTNESS_NO_CONNECTION  4
+#define LED_BRIGHTNESS_HANDLEMESSAGE  10
+#define LED_BRIGHTNESS_BOOT          100
+#define LED_BRIGHTNESS_CONNECTED      10
+#define LED_BRIGHTNESS_OFF            0
 
 // Channel & timer allocation table
 
@@ -136,8 +141,8 @@ void analogwrite_attach(uint8_t pin, int channel)
   ledcSetup(channel, ANALOGWRITE_FREQUENCY, ANALOGWRITE_RESOLUTION); //channel, freq, resolution
   ledcAttachPin(pin, channel); // pin, channel
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.print("AnalogWrite: PWMRANGE=");
-  DEBUG_SERIAL.println(PWMRANGE);
+  Serial.print("AnalogWrite: PWMRANGE=");
+  Serial.println(PWMRANGE);
 #endif
 }
 
@@ -163,51 +168,44 @@ void servo_write_channel(uint8_t channel, uint32_t value, uint32_t valueMax = 18
 
 void updateMotors()
 {
+  if (motors_halt)
+  {
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.print("updateMotors servo_angle=");
-  DEBUG_SERIAL.print(servo_angle);
-  DEBUG_SERIAL.print(" currentspeedforward=");
-  DEBUG_SERIAL.print(currentspeedforward);
-  DEBUG_SERIAL.print(" currentspeedLR=");
-  DEBUG_SERIAL.print(currentspeedLR);
-  DEBUG_SERIAL.print(" up_pwm_value=");
-  DEBUG_SERIAL.print(up_pwm_value);
-  DEBUG_SERIAL.println();
+    DEBUG_SERIAL.println(F("updateMotors motor_halt=true"));
 #endif
+    // up motor
+    analogwrite_channel(CHANNEL_ANALOGWRITE_UP, 0);
 
-  // servo
-  servo_write_channel(CHANNEL_SERVO1, servo_angle);
-  // hg7881_run(currentspeedLR);
-  drv8833_run(currentspeedLR);
-
-  // up motor
-  analogwrite_channel(CHANNEL_ANALOGWRITE_UP, up_pwm_value);
-
-  // forward motor
-  analogwrite_channel(CHANNEL_ANALOGWRITE_FORWARD, currentspeedforward);
-}
-
-void motors_halt()
-{
+    // forward motor
+    analogwrite_channel(CHANNEL_ANALOGWRITE_FORWARD, 0);
+  }
+  else
+  {
+/*
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.println("motors_halt");
+    DEBUG_SERIAL.print("updateMotors servo_angle=");
+    DEBUG_SERIAL.print(servo_angle);
+    DEBUG_SERIAL.print(" currentspeedforward=");
+    DEBUG_SERIAL.print(currentspeedforward);
+    DEBUG_SERIAL.print(" currentspeedLR=");
+    DEBUG_SERIAL.print(currentspeedLR);
+    DEBUG_SERIAL.print(" up_pwm_value=");
+    DEBUG_SERIAL.print(up_pwm_value);
+    DEBUG_SERIAL.println();
 #endif
+*/
+    // servo
+    servo_write_channel(CHANNEL_SERVO1, servo_angle);
+    // hg7881_run(currentspeedLR);
+    drv8833_run(currentspeedLR);
 
-  // servo
-  servo_write_channel(CHANNEL_SERVO1, 90);
+    // up motor
+    analogwrite_channel(CHANNEL_ANALOGWRITE_UP, up_pwm_value);
 
-  // H-bridge
-  // hg7881_halt();
-  drv8833_halt();
-
-  // up motor
-  analogwrite_channel(CHANNEL_ANALOGWRITE_UP, 0);
-
-  // forward motor
-  analogwrite_channel(CHANNEL_ANALOGWRITE_FORWARD, 0);
+    // forward motor
+    analogwrite_channel(CHANNEL_ANALOGWRITE_FORWARD, currentspeedforward);
+  }
 }
-
-
 
 void camera_init()
 {
@@ -310,28 +308,26 @@ void setup()
   analogwrite_attach(hbridgePinA, CHANNEL_ANALOGWRITE_HBRIDGEA); // pin, channel
   analogwrite_attach(hbridgePinB, CHANNEL_ANALOGWRITE_HBRIDGEB); // pin, channel
 
-  // LED_BUILTIN
-  pinMode(LED_BUILTIN, OUTPUT);
-  analogwrite_attach(LED_BUILTIN, CHANNEL_ANALOGWRITE_LED); // pin, channel
+  pinMode(PIN_LED, OUTPUT);
+  analogwrite_attach(PIN_LED, CHANNEL_ANALOGWRITE_LED); // pin, channel
 
   // flash 2 time to show we are rebooting
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_BOOT); // LED_BUILTIN
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_BOOT); 
   delay(10);
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, 0); // LED_BUILTIN
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_OFF); 
   delay(100);
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_BOOT); // LED_BUILTIN
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_BOOT); 
   delay(10);
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, 0); // LED_BUILTIN
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_OFF); 
 
   // steering servo PWM
   servo_attach(turnPin, CHANNEL_SERVO1); // pin, channel
 
-  init_values();
-  updateMotors();
+  init_motors();
 
   camera_init();
 
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_NO_CONNECTION ); // LED_BUILTIN
+  // analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_NO_CONNECTION ); 
 
   // Wifi setup
   uint8_t macAddr[6];
@@ -340,7 +336,7 @@ void setup()
   /* set up access point */
   WiFi.mode(WIFI_AP);
 
-   char ssidmac[33];
+  char ssidmac[33];
   sprintf(ssidmac, "%s%02X%02X", ssid, macAddr[4], macAddr[5]); // ssidmac = ssid + 4 hexadecimal values of MAC address
   WiFi.softAP(ssidmac, password);
   IPAddress apIP = WiFi.softAPIP();
@@ -376,7 +372,9 @@ void setup()
   }
 
 #ifdef DEBUG_SERIAL
-  DEBUG_SERIAL.print("\nWiFi connected - IP address: ");
+  DEBUG_SERIAL.println("");
+  DEBUG_SERIAL.println("WiFi connected");
+  DEBUG_SERIAL.println("IP address: ");
   DEBUG_SERIAL.println(WiFi.localIP());   // You can get IP address assigned to ESP
 #endif
 
@@ -394,7 +392,7 @@ void setup()
   DEBUG_SERIAL.print("Is server live? ");
   DEBUG_SERIAL.println(server.available());
 #endif
-  last_activity = millis();
+  last_activity_message = millis();
 }
 
 void handleSlider(int value)
@@ -419,26 +417,60 @@ void handleJoystick(int x, int y)
   servo_angle = map(x, -180, 180, 35, 135);
 
   currentspeedLR = map(x, -180, 180, -PWMRANGE, PWMRANGE);
-  currentspeedforward = constrain(map(y, 180, -180, -PWMRANGE, PWMRANGE),0,PWMRANGE);
+  currentspeedforward = constrain(map(y, 180, -180, -PWMRANGE, PWMRANGE), 0, PWMRANGE);
   updateMotors();
 }
 
+void onEventsCallback(WebsocketsEvent event, String data) {
+  if (event == WebsocketsEvent::ConnectionOpened) {
+#ifdef DEBUG_SERIAL
+    DEBUG_SERIAL.println("Connnection Opened");
+#endif
+  } else if (event == WebsocketsEvent::ConnectionClosed) {
+#ifdef DEBUG_SERIAL
+    DEBUG_SERIAL.println("Connnection Closed");
+#endif
+  } else if (event == WebsocketsEvent::GotPing) {
+#ifdef DEBUG_SERIAL
+    DEBUG_SERIAL.println("Got a Ping!");
+#endif
+  } else if (event == WebsocketsEvent::GotPong) {
+#ifdef DEBUG_SERIAL
+    DEBUG_SERIAL.println("Got a Pong!");
+#endif
+    analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_HANDLEMESSAGE); 
+    last_activity_message = millis();
+  }
+}
+
 void handle_message(WebsocketsMessage msg) {
+  // TODO less memory
   int colonIndex = msg.data().indexOf(':');
   int commaIndex = msg.data().indexOf(',');
   int id = msg.data().substring(0, colonIndex).toInt();
   int param1 = msg.data().substring(colonIndex + 1, commaIndex).toInt();
   int param2 = msg.data().substring(commaIndex + 1).toInt();
 
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_HANDLEMESSAGE); // LED_BUILTIN
 
 #ifdef DEBUG_SERIAL
   DEBUG_SERIAL.println("");
   DEBUG_SERIAL.print("handle_message ");
   DEBUG_SERIAL.println(msg.data());
 #endif
+
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_HANDLEMESSAGE); 
+
+  last_activity_message = millis();
+
   switch (id)
   {
+    case 0:       // ping
+      if (motors_halt)
+      {
+        motors_resume();
+      }
+      break;
+
     case 1:
       handleJoystick(param1, param2);
       break;
@@ -446,71 +478,131 @@ void handle_message(WebsocketsMessage msg) {
     case 2: handleSlider(param1);
       break;
   }
-  last_activity = millis();
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, 0); // LED_BUILTIN
+  // analogwrite_channel(CHANNEL_ANALOGWRITE_LED, 0); 
 }
 
-void init_values()
+void motors_pause()
+{
+#ifdef DEBUG_SERIAL
+  DEBUG_SERIAL.println(F("motors_pause"));
+#endif
+
+  motors_halt = true;
+  updateMotors();
+}
+
+void motors_resume()
+{
+#ifdef DEBUG_SERIAL
+  DEBUG_SERIAL.println(F("motors_resume"));
+#endif
+  motors_halt = false;
+  updateMotors();
+}
+
+void init_motors()
 {
   currentspeedforward = 0;
   currentspeedLR = 0;
   servo_angle = 90;
   up_pwm_value = 0;
+
+  motors_halt = false;
+  updateMotors();
+}
+
+void onConnect()
+{
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_CONNECTED); 
+
+#ifdef DEBUG_SERIAL
+  DEBUG_SERIAL.println(F("onConnect"));
+#endif
+  init_motors();
+}
+
+void onDisconnect()
+{
+#ifdef DEBUG_SERIAL
+  DEBUG_SERIAL.println(F("onDisconnect"));
+#endif
+  init_motors();
 }
 
 void loop()
 {
-  static unsigned long millis_last = 0;
+  static unsigned long millis_last_camera = 0;
+  static int is_connected = 0;
 
 #if defined(USE_SOFTAP)
   dnsServer.processNextRequest();
 #endif
-   
-  if (millis() > last_activity + TIMEOUT_MS)
+
+  if (millis() > last_activity_message + TIMEOUT_MS_LED)
+  {
+    analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_OFF);
+  }
+
+  if (millis() > last_activity_message + TIMEOUT_MS_MOTORS)
   {
 
 #ifdef DEBUG_SERIAL
-    DEBUG_SERIAL.println("Safety shutdown ...");
+    DEBUG_SERIAL.println(F("Safety shutdown ..."));
 #endif
-    motors_halt();
+    motors_pause();
 
-    last_activity = millis();
+    last_activity_message = millis();
   }
 
-  if (sclient.available()) {
-    sclient.poll();
+  if (is_connected)
+  {
+    if (sclient.available()) { // als return non-nul, dan is er een client geconnecteerd
+      sclient.poll(); // als return non-nul, dan is er iets ontvangen
 
-    long currentmillis = millis();
-    if (currentmillis - millis_last > MIN_TIME_PER_FRAME)
-    {
-      millis_last = currentmillis;
+      long currentmillis = millis();
+      if (currentmillis - millis_last_camera > MIN_TIME_PER_FRAME)
+      {
+        millis_last_camera = currentmillis;
 
 #ifdef USE_CAMERA
-      fb = esp_camera_fb_get();
-      if (fb)
-      {
-        sclient.sendBinary((const char *)fb->buf, fb->len);
-        esp_camera_fb_return(fb);
-        fb = NULL;
-      }
+        fb = esp_camera_fb_get();
+        if (fb)
+        {
+          sclient.sendBinary((const char *)fb->buf, fb->len);
+          esp_camera_fb_return(fb);
+          fb = NULL;
+        }
 #endif
+      }
+      updateMotors();
+    }
+    else
+    {
+      // no longer connected
+      onDisconnect();
+      is_connected = 0;
     }
   }
-  else
+  if (server.poll()) // if a new socket connection is requested
   {
 #ifdef DEBUG_SERIAL
-    DEBUG_SERIAL.println("Connection closed ...");
+    DEBUG_SERIAL.print(F("server.poll is_connected="));
+    DEBUG_SERIAL.println(is_connected);
 #endif
-    analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_NO_CONNECTION ); // LED_BUILTIN
-    motors_halt();
+    init_motors();
     sclient = server.accept();
-    sclient.onMessage(handle_message);
-    analogwrite_channel(CHANNEL_ANALOGWRITE_LED, 0); // LED_BUILTIN
 #ifdef DEBUG_SERIAL
-    DEBUG_SERIAL.println("Connection open");
+    DEBUG_SERIAL.println("Connection accept");
 #endif
-    init_values();
-    updateMotors();
+    sclient.onMessage(handle_message);
+    sclient.onEvent(onEventsCallback); // run callback when events are occuring
+    onConnect();
+    is_connected = 1;
   }
-  delay(2); 
+
+  if (!is_connected)
+  {
+    analogwrite_channel(CHANNEL_ANALOGWRITE_LED, (millis() % 1000) > 500 ? LED_BRIGHTNESS_NO_CONNECTION : LED_BRIGHTNESS_OFF); 
+  }
+  delay(2);
 }
