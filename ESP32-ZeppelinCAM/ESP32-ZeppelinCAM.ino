@@ -440,18 +440,37 @@ void onEventsCallback(WebsocketsEvent event, String data) {
 }
 
 void handle_message(WebsocketsMessage msg) {
-  // TODO less memory
-  int colonIndex = msg.data().indexOf(':');
-  int commaIndex = msg.data().indexOf(',');
-  int id = msg.data().substring(0, colonIndex).toInt();
-  int param1 = msg.data().substring(colonIndex + 1, commaIndex).toInt();
-  int param2 = msg.data().substring(commaIndex + 1).toInt();
-
+  const char *msgstr = msg.c_str();
+  const char *p;
 
 #ifdef DEBUG_SERIAL
   DEBUG_SERIAL.println();
   DEBUG_SERIAL.print(F("handle_message "));
-  DEBUG_SERIAL.println(msg.data());
+#endif
+
+  int id = atoi(msgstr);
+  int param1 = 0;
+  int param2 = 0;
+
+  p = strchr(msgstr, ':');
+  if (p)
+  {
+    param1 = atoi(++p);
+    p = strchr(p, ',');
+    if (p)
+    {
+      param2 = atoi(++p);
+    }
+  }
+
+#ifdef DEBUG_SERIAL
+  DEBUG_SERIAL.println(msgstr);
+  DEBUG_SERIAL.print(F(" id = "));
+  DEBUG_SERIAL.print(id);
+  DEBUG_SERIAL.print(F(" param1 = "));
+  DEBUG_SERIAL.print(param1);
+  DEBUG_SERIAL.print(F(" param2 = "));
+  DEBUG_SERIAL.println(param2);
 #endif
 
   analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_HANDLEMESSAGE); 
