@@ -603,7 +603,6 @@ void loop()
     DEBUG_SERIAL.print(F("server.poll is_connected="));
     DEBUG_SERIAL.println(is_connected);
 #endif
-    init_motors();
     sclient = server.accept();
 #ifdef DEBUG_SERIAL
     DEBUG_SERIAL.println(F("Connection accept"));
