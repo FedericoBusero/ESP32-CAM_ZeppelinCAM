@@ -103,6 +103,7 @@ figure img{
 </head>
 <body>
 <div id='outerContainer'>
+<span id="connectiondisplay">Trying to connect</span>
   <figure>
     <div id="stream-container" class="image-container"> <img id="stream" src=""> </div>
   </figure>
@@ -116,11 +117,13 @@ figure img{
 
 <script>
 var retransmitInterval;
+const connectiondisplay= document.getElementById('connectiondisplay');
 const view = document.getElementById('stream');
 const WS_URL = "ws://" + window.location.host + ":82";
 const ws = new WebSocket(WS_URL);
     
 ws.onopen = function() {
+    connectiondisplay.textContent = "Connected";
     retransmitInterval=setInterval(function ws_onopen_ping() {
       if (ws.bufferedAmount == 0)
       {
@@ -130,11 +133,16 @@ ws.onopen = function() {
 };
 
 ws.onclose = function() {
+    connectiondisplay.textContent = "Disconnected. Refresh!";
     if (retransmitInterval)    
     {        
       clearInterval(retransmitInterval);        
       retransmitInterval = null;     
     }
+};
+
+ws.onerror = function() {
+    connectiondisplay.textContent = "Error";
 };
 
 ws.onmessage = function (message) {
