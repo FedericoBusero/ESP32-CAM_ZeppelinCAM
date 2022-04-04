@@ -121,7 +121,7 @@ const WS_URL = "ws://" + window.location.host + ":82";
 const ws = new WebSocket(WS_URL);
     
 ws.onopen = function() {
-    retransmitInterval=setInterval(() => {
+    retransmitInterval=setInterval(function ws_onopen_ping() {
       ws.send("0");
     }, 1000);
 };
@@ -134,7 +134,7 @@ ws.onclose = function() {
     }
 };
 
-ws.onmessage = message => {
+ws.onmessage = function (message) {
   if (message.data instanceof Blob) {
     var urlObject = URL.createObjectURL(message.data);
     view.src = urlObject;
@@ -252,7 +252,7 @@ function send(txt) {
         var ms = lastSend !== undefined ? min_time_transmit - (now - lastSend) : min_time_transmit;
         if(ms < 0)
             ms = 0;
-        sendTimeout = setTimeout(() => {
+        sendTimeout = setTimeout(function send_waittransmit() {
             sendTimeout = null;
             send(lastText);
         }, ms);
