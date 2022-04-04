@@ -122,7 +122,10 @@ const ws = new WebSocket(WS_URL);
     
 ws.onopen = function() {
     retransmitInterval=setInterval(function ws_onopen_ping() {
-      ws.send("0");
+      if (ws.bufferedAmount == 0)
+      {
+        ws.send("0");
+      }
     }, 1000);
 };
 
@@ -238,12 +241,23 @@ function send(txt) {
       return;
     }
     if(lastSend === undefined || now - lastSend >= min_time_transmit) {
-        try {
+        if (ws.bufferedAmount>0)
+        {
+          lastText = txt;
+          sendTimeout = setTimeout(function send_trafficjam() {
+            sendTimeout = null;
+            send(lastText);
+          }, min_time_transmit);
+        }
+        else
+        {
+          try {
             ws.send(txt);
             lastSend = new Date().getTime();
             return;
-        } catch(e) {
+          } catch(e) {
             console.log(e);
+          }
         }
     }
     else
