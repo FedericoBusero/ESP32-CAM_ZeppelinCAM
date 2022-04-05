@@ -120,37 +120,54 @@ var retransmitInterval;
 const connectiondisplay= document.getElementById('connectiondisplay');
 const view = document.getElementById('stream');
 const WS_URL = "ws://" + window.location.host + ":82";
-const ws = new WebSocket(WS_URL);
+var ws;
+
+function connect_ws()
+{
+  ws = new WebSocket(WS_URL);
     
-ws.onopen = function() {
-    connectiondisplay.textContent = "Connected";
-    retransmitInterval=setInterval(function ws_onopen_ping() {
-      if (ws.bufferedAmount == 0)
-      {
-        ws.send("0");
+  ws.onopen = function() {
+      connectiondisplay.textContent = "";
+      retransmitInterval=setInterval(function ws_onopen_ping() {
+        if (ws.bufferedAmount == 0)
+        {
+          ws.send("0");
+        }
+      }, 1000);
+  };
+
+  ws.onclose = function() {
+      connectiondisplay.textContent = "Disconnected";
+      if (retransmitInterval)    
+      {        
+        clearInterval(retransmitInterval);        
+        retransmitInterval = null;     
       }
-    }, 1000);
-};
+  };
 
-ws.onclose = function() {
-    connectiondisplay.textContent = "Disconnected. Refresh!";
-    if (retransmitInterval)    
-    {        
-      clearInterval(retransmitInterval);        
-      retransmitInterval = null;     
+  ws.onerror = function() {
+      connectiondisplay.textContent = "Error";
+  };
+
+  ws.onmessage = function (message) {
+    if (message.data instanceof Blob) {
+      var urlObject = URL.createObjectURL(message.data);
+      view.src = urlObject;
     }
-};
+    if (typeof message.data === "string") {
+      connectiondisplay.textContent = message.data;
+    }
+  };
+}
 
-ws.onerror = function() {
-    connectiondisplay.textContent = "Error";
-};
+connect_ws();
 
-ws.onmessage = function (message) {
-  if (message.data instanceof Blob) {
-    var urlObject = URL.createObjectURL(message.data);
-    view.src = urlObject;
+var checkConnectionInterval = setInterval(function check_connection_interval() {
+  if (ws.readyState == WebSocket.CLOSED) {
+    connectiondisplay.textContent = "Reconnecting ...";
+    connect_ws();
   }
-};
+}, 5000);
 
 const joystickfactor = 2.8;
 
