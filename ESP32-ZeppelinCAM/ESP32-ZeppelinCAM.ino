@@ -383,9 +383,10 @@ void setup()
 #endif // USE_SOFTAP
 
   webserver.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
-    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", index_html, sizeof(index_html));
-    // response->addHeader("Content-Encoding", "gzip");
-    request->send(response);
+#ifdef DEBUG_SERIAL
+    DEBUG_SERIAL.println(F("on HTTP_GET: return"));
+#endif
+    request->send(200, "text/html", index_html);
   });
 
   webserver.begin();
