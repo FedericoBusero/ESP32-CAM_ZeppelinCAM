@@ -1,9 +1,10 @@
 // ESP32 Board manager version 1.0.4
 // Arduino IDE: Board = AIThinker ESP32-CAM
 
-#include <ArduinoWebsockets.h>
-#include <WiFi.h>
+#include <ArduinoWebsockets.h> // Install from Arduino library manager : "ArduinoWebsockets" by Gil Maimon, https://github.com/gilmaimon/ArduinoWebsockets
 #include <ESPAsyncWebServer.h> // https://github.com/me-no-dev/ESPAsyncWebServer && https://github.com/me-no-dev/AsyncTCP
+
+#include <WiFi.h>
 #include <driver/ledc.h>
 
 #define USE_CAMERA
@@ -417,7 +418,7 @@ void handleJoystick(int x, int y)
   updateMotors();
 }
 
-void handle_message(WebsocketsMessage msg) {
+void handle_message(websockets::WebsocketsMessage msg) {
   const char *msgstr = msg.c_str();
   const char *p;
 
