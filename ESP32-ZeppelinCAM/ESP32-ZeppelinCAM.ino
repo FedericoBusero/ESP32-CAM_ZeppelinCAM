@@ -17,7 +17,7 @@
 // const char* ssid = "NSA"; //Enter SSID
 // const char* password = "Orange"; //Enter Password
 #define USE_SOFTAP
-
+#define WIFI_SOFTAP_CHANNEL 1 // 1-13
 const char ssid[] = "BlimpCam-";
 const char password[] = "12345678";
 
@@ -338,7 +338,7 @@ void setup()
 
   char ssidmac[33];
   sprintf(ssidmac, "%s%02X%02X", ssid, macAddr[4], macAddr[5]); // ssidmac = ssid + 4 hexadecimal values of MAC address
-  WiFi.softAP(ssidmac, password);
+  WiFi.softAP(ssidmac, password, WIFI_SOFTAP_CHANNEL);
   IPAddress apIP = WiFi.softAPIP();
 #ifdef DEBUG_SERIAL
   DEBUG_SERIAL.print(F("SoftAP SSID="));
