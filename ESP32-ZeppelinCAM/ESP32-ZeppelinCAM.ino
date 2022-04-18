@@ -24,6 +24,8 @@ const char password[] = "12345678";
 #ifdef USE_SOFTAP
 #include <DNSServer.h>
 DNSServer dnsServer;
+#else
+#include <ESPmDNS.h>
 #endif
 
 #include "zeppelincam_html.h" // Do not put html code in ino file to avoid problems with the preprocessor
@@ -380,6 +382,16 @@ void setup()
   DEBUG_SERIAL.println(WiFi.localIP());   // You can get IP address assigned to ESP
 #endif
 
+  if (!MDNS.begin(host_name)) {
+#ifdef DEBUG_SERIAL
+    DEBUG_SERIAL.println("Error starting mDNS");
+#endif
+    return;
+  }
+
+  // Add service to MDNS-SD
+  MDNS.addService("http", "tcp", 80);
+   
 #endif // USE_SOFTAP
 
   webserver.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
