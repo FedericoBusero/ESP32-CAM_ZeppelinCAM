@@ -294,9 +294,10 @@ void drv8833_run(int16_t speed)
 
 void setup()
 {
+  delay(200);   
 #ifdef DEBUG_SERIAL
   DEBUG_SERIAL.begin(115200);
-  DEBUG_SERIAL.println(F("ZeppelinCAM started"));
+  DEBUG_SERIAL.println(F("\nZeppelinCAM started"));
 #endif
 
   // forward motor PWM
