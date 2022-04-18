@@ -1,4 +1,4 @@
-const uint8_t index_html[] PROGMEM = R"=====(
+const char index_html[] PROGMEM = R"=====(
 <html>
 <head>
 <meta name='viewport'         content='width=device-width,         initial-scale=1.0,         user-scalable=no' />
