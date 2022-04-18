@@ -28,6 +28,10 @@ DNSServer dnsServer;
 #include "zeppelincam_html.h" // Do not put html code in ino file to avoid problems with the preprocessor
 
 #ifdef USE_CAMERA
+
+// video streaming setting
+#define MIN_TIME_PER_FRAME 200 // minimum time between video frames in ms e.g. minimum 200ms means max 5fps
+
 // ESP32-CAM pin definitions
 #define PWDN_GPIO_NUM     32
 #define RESET_GPIO_NUM    -1
@@ -54,8 +58,6 @@ WebsocketsServer server;
 AsyncWebServer webserver(80);
 WebsocketsClient sclient;
 
-// video streaming setting
-#define MIN_TIME_PER_FRAME 200 // minimum time between video frames in ms e.g. minimum 200ms means max 5fps
 
 // timeoutes
 #define TIMEOUT_MS_MOTORS 2500L // Safety shutdown: motors will go to power off position after x milliseconds no message received
@@ -572,12 +574,12 @@ void loop()
     if (sclient.available()) { // als return non-nul, dan is er een client geconnecteerd
       sclient.poll(); // als return non-nul, dan is er iets ontvangen
 
+#ifdef USE_CAMERA
       long currentmillis = millis();
       if (currentmillis - millis_last_camera > MIN_TIME_PER_FRAME)
       {
         millis_last_camera = currentmillis;
 
-#ifdef USE_CAMERA
         fb = esp_camera_fb_get();
         if (fb)
         {
@@ -585,8 +587,8 @@ void loop()
           esp_camera_fb_return(fb);
           fb = NULL;
         }
-#endif
       }
+#endif
       updateMotors();
     }
     else
