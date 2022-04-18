@@ -330,6 +330,8 @@ void setup()
   camera_init();
 
   // Wifi setup
+  WiFi.persistent(true);
+   
   uint8_t macAddr[6];
   WiFi.macAddress(macAddr);
 #if defined(USE_SOFTAP)
