@@ -335,6 +335,7 @@ void setup()
   uint8_t macAddr[6];
   WiFi.macAddress(macAddr);
 #if defined(USE_SOFTAP)
+  WiFi.disconnect();
   /* set up access point */
   WiFi.mode(WIFI_AP);
 
@@ -352,6 +353,7 @@ void setup()
   dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer.start(53, "*", apIP);
 #else // USE_SOFTAP not defined
+  WiFi.softAPdisconnect(true);
   // host_name = "BlimpCam-" + 6 hexadecimal values of MAC address
   char host_name[33];
   sprintf(host_name, "BlimpCam-%02X%02X%02X", macAddr[3], macAddr[4], macAddr[5]);
