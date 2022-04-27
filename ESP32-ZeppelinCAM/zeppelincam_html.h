@@ -108,7 +108,7 @@ figure img{
     <div id="stream-container" class="image-container"> <img id="stream" src=""> </div>
   </figure>
 <br/>
-<input type="range" min="0" max="360" value="0" step="1" class="slider-color" oninput="showValue(2,this.value)" />
+<input id="sliderup" type="range" min="0" max="360" value="0" step="1" class="slider-color" oninput="showValue(2,this.value)" />
 <br>
   <div id='container'>
     <div id='item'> </div>
@@ -119,6 +119,7 @@ figure img{
 var retransmitInterval;
 const connectiondisplay= document.getElementById('connectiondisplay');
 const view = document.getElementById('stream');
+const sliderup = document.getElementById('sliderup');
 const WS_URL = "ws://" + window.location.host + ":82";
 var ws;
 
@@ -128,6 +129,8 @@ function connect_ws()
     
   ws.onopen = function() {
       connectiondisplay.textContent = "";
+      showValue(2,sliderup.value);
+
       retransmitInterval=setInterval(function ws_onopen_ping() {
         if (ws.bufferedAmount == 0)
         {
