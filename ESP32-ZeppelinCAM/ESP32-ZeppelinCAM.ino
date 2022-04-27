@@ -181,6 +181,10 @@ void updateMotors()
 
     // forward motor
     analogwrite_channel(CHANNEL_ANALOGWRITE_FORWARD, 0);
+
+    // L/R motor
+    drv8833_halt();
+  
   }
   else
   {
