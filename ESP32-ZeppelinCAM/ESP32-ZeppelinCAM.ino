@@ -83,7 +83,10 @@ long last_activity_message;
 */
 
 const int fwdPin = 2;  //Forward Motor Pin
+
 const int turnPin = 12;  //Steering Servo Pin
+#define SERVO_SWEEP_TIME 600 // in ms
+
 const int upPin = 15;  // Up Pin
 
 const int hbridgePinA = 13; // H-bridge pin A
@@ -91,10 +94,13 @@ const int hbridgePinB = 14; // H-bridge pin B
 
 #define PIN_LED 4
 
-int currentspeedforward;
-int currentspeedLR;
-int servo_angle;
-int up_pwm_value;
+#define MOTOR_TIME_UP 1000 // ms to go to ease to full power of a motor 
+
+#include "Easer.h"
+Easer speedforward;
+Easer speedLR;
+Easer speed_up;
+Easer servo_angle;
 
 bool motors_halt;
 
@@ -188,29 +194,34 @@ void updateMotors()
   }
   else
   {
+    servo_angle.update();
+    speedforward.update();
+    speedLR.update();
+    speed_up.update();
 /*
 #ifdef DEBUG_SERIAL
     DEBUG_SERIAL.print(F("updateMotors servo_angle="));
-    DEBUG_SERIAL.print(servo_angle);
-    DEBUG_SERIAL.print(F(" currentspeedforward="));
-    DEBUG_SERIAL.print(currentspeedforward);
-    DEBUG_SERIAL.print(F(" currentspeedLR="));
-    DEBUG_SERIAL.print(currentspeedLR);
-    DEBUG_SERIAL.print(F(" up_pwm_value="));
-    DEBUG_SERIAL.print(up_pwm_value);
+    DEBUG_SERIAL.print(servo_angle.getCurrentValue());
+    DEBUG_SERIAL.print(F(" speedforward="));
+    DEBUG_SERIAL.print(speedforward.getCurrentValue());
+    DEBUG_SERIAL.print(F(" speedLR="));
+    DEBUG_SERIAL.print(speedLR.getCurrentValue());
+    DEBUG_SERIAL.print(F(" speed_up="));
+    DEBUG_SERIAL.print(speed_up.getCurrentValue());
     DEBUG_SERIAL.println();
 #endif
 */
     // servo
-    servo_write_channel(CHANNEL_SERVO1, servo_angle);
-    // hg7881_run(currentspeedLR);
-    drv8833_run(currentspeedLR);
+    servo_write_channel(CHANNEL_SERVO1, servo_angle.getCurrentValue());
+     
+    // hg7881_run(speedLR.getCurrentValue());
+    drv8833_run(speedLR.getCurrentValue());
 
     // up motor
-    analogwrite_channel(CHANNEL_ANALOGWRITE_UP, up_pwm_value);
+    analogwrite_channel(CHANNEL_ANALOGWRITE_UP, speed_up.getCurrentValue());
 
     // forward motor
-    analogwrite_channel(CHANNEL_ANALOGWRITE_FORWARD, currentspeedforward);
+    analogwrite_channel(CHANNEL_ANALOGWRITE_FORWARD, speedforward.getCurrentValue());
   }
 }
 
@@ -330,7 +341,18 @@ void setup()
 
   // steering servo PWM
   servo_attach(turnPin, CHANNEL_SERVO1); // pin, channel
+  servo_angle.begin(90);
+  servo_angle.set_speed(SERVO_SWEEP_TIME / 180);
 
+  speedforward.begin(0, false);
+  speedforward.set_speed((float)MOTOR_TIME_UP / (float)PWMRANGE);
+
+  speedLR.begin(0);
+  speedLR.set_speed((float)MOTOR_TIME_UP / (float)PWMRANGE);
+
+  speed_up.begin(0, false);
+  speed_up.set_speed((float)MOTOR_TIME_UP / (float)PWMRANGE);
+ 
   init_motors();
 
   camera_init();
@@ -420,7 +442,7 @@ void handleSlider(int value)
   DEBUG_SERIAL.print(F("handleSlider value="));
   DEBUG_SERIAL.println(value);
 #endif
-  up_pwm_value = map(value, 0, 360, 0, PWMRANGE);
+  speed_up.easeTo(map(value, 0, 360, 0, PWMRANGE));
   updateMotors();
 }
 
@@ -433,10 +455,10 @@ void handleJoystick(int x, int y)
   DEBUG_SERIAL.print(F(" y="));
   DEBUG_SERIAL.println(y);
 #endif
-  servo_angle = map(x, -180, 180, 35, 135);
+  servo_angle.easeTo(map(x, -180, 180, 35, 135));
 
-  currentspeedLR = map(x, -180, 180, -PWMRANGE, PWMRANGE);
-  currentspeedforward = constrain(map(y, 180, -180, -PWMRANGE, PWMRANGE), 0, PWMRANGE);
+  speedLR.easeTo(map(x, -180, 180, -PWMRANGE, PWMRANGE));
+  speedforward.easeTo(constrain(map(y, 180, -180, -PWMRANGE, PWMRANGE), 0, PWMRANGE));
   updateMotors();
 }
 
@@ -518,10 +540,10 @@ void motors_resume()
 
 void init_motors()
 {
-  currentspeedforward = 0;
-  currentspeedLR = 0;
-  servo_angle = 90;
-  up_pwm_value = 0;
+  speedforward.setValue(0);
+  speedLR.setValue(0);
+  servo_angle.setValue(90);
+  speed_up.setValue(0);
 
   motors_halt = false;
   updateMotors();
