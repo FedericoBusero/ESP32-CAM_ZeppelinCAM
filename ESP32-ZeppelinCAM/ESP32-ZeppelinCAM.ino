@@ -189,7 +189,7 @@ void updateMotors()
     analogwrite_channel(CHANNEL_ANALOGWRITE_FORWARD, 0);
 
     // L/R motor
-    drv8833_halt();
+    hbridge_halt();
   
   }
   else
@@ -214,8 +214,7 @@ void updateMotors()
     // servo
     servo_write_channel(CHANNEL_SERVO1, servo_angle.getCurrentValue());
      
-    // hg7881_run(speedLR.getCurrentValue());
-    drv8833_run(speedLR.getCurrentValue());
+    hbridge_run(speedLR.getCurrentValue());
 
     // up motor
     analogwrite_channel(CHANNEL_ANALOGWRITE_UP, speed_up.getCurrentValue());
@@ -287,30 +286,13 @@ void camera_init()
 #endif
 }
 
-void hg7881_halt()
-{
-  analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEA, 0 );
-  analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEB, 0 );
-}
-
-void hg7881_run(int16_t speed)
-{
-  if (speed >= 0) {
-    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEA, PWMRANGE ); // direction = forward
-    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEB, (int16_t)PWMRANGE - speed );
-  } else {
-    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEA, 0 ); // direction = backward
-    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEB, -speed ); // PWM speed
-  }
-}
-
-void drv8833_halt()
+void hbridge_halt()
 {
   analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEA, PWMRANGE );
   analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEB, PWMRANGE );
 }
 
-void drv8833_run(int16_t speed)
+void hbridge_run(int16_t speed)
 {
   if (speed >= 0) {
     analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEA, speed );
