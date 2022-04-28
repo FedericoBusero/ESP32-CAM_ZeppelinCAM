@@ -228,6 +228,12 @@ void updateMotors()
 void camera_init()
 {
 #ifdef USE_CAMERA
+  static boolean camera_initialised = false;
+
+  if (camera_initialised) {
+    return;
+  }
+
   camera_config_t config;
   config.ledc_channel = CHANNEL_CAMERA;
   config.ledc_timer = TIMER_CAMERA;
@@ -267,6 +273,13 @@ void camera_init()
     DEBUG_SERIAL.printf("Camera init failed with error 0x%x", err);
 #endif
     return;
+  }
+  else
+  {
+#ifdef DEBUG_SERIAL
+    DEBUG_SERIAL.println("Camera initialised correctly.");
+#endif
+    camera_initialised = true;
   }
 
   sensor_t * s = esp_camera_sensor_get();
@@ -355,7 +368,7 @@ void setup()
  
   init_motors();
 
-  camera_init();
+  // Don't call camera_init, in case of low power it should be possible to control the motors and let the camera switched off
 
   // Wifi setup
   WiFi.persistent(true);
@@ -603,6 +616,7 @@ void loop()
       {
         millis_last_camera = currentmillis;
 
+        camera_init(); // if already initialised, returns quickly
         fb = esp_camera_fb_get();
         if (fb)
         {
