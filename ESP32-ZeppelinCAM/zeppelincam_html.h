@@ -103,6 +103,7 @@ figure img{
 </head>
 <body>
 <div id='outerContainer'>
+<input id='videoswitch' type="checkbox" onchange="onChangevideoswitch()"/>
 <span id="connectiondisplay">Trying to connect</span>
   <figure>
     <div id="stream-container" class="image-container"> <img id="stream" src=""> </div>
@@ -119,6 +120,7 @@ figure img{
 var retransmitInterval;
 const connectiondisplay= document.getElementById('connectiondisplay');
 const view = document.getElementById('stream');
+const videoswitch = document.getElementById('videoswitch');
 const sliderup = document.getElementById('sliderup');
 const WS_URL = "ws://" + window.location.host + ":82";
 var ws;
@@ -129,7 +131,9 @@ function connect_ws()
     
   ws.onopen = function() {
       connectiondisplay.textContent = "";
+      onChangevideoswitch();
       showValue(2,sliderup.value);
+      // TODO send position of joystick
 
       retransmitInterval=setInterval(function ws_onopen_ping() {
         if (ws.bufferedAmount == 0)
@@ -171,6 +175,18 @@ var checkConnectionInterval = setInterval(function check_connection_interval() {
     connect_ws();
   }
 }, 5000);
+
+function onChangevideoswitch() {
+  if (videoswitch.checked) {
+    view.style = '';
+    ws.send("3:1");
+  }
+  else {
+    view.style.visibility= 'hidden';
+    view.style = 'display:none';
+    ws.send("3:0");
+  }
+}
 
 const joystickfactor = 2.8;
 
