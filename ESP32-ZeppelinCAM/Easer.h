@@ -54,6 +54,7 @@ class Easer
       if (!ease_down && (destinationvalue<currentValue))
       {
         setValue(destinationvalue);
+        return;
       }
       startValue = currentValue;
       changeValue = destinationvalue - startValue;
