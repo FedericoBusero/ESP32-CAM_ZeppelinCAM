@@ -412,8 +412,9 @@ void setup()
     return;
   }
 
-  // Add service to MDNS-SD
-  MDNS.addService("http", "tcp", 80);
+  
+  MDNS.addService("http", "tcp", 80); // Add http service to MDNS-SD
+  MDNS.addService("ws", "tcp", 82); // Add websocket service to MDNS-SD
    
 #endif // USE_SOFTAP
 
