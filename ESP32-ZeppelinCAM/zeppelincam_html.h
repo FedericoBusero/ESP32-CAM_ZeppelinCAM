@@ -109,7 +109,7 @@ figure img{
     <div id="stream-container" class="image-container"> <img id="stream" src=""> </div>
   </figure>
 <br/>
-<input id="sliderup" type="range" min="0" max="360" value="0" step="1" class="slider-color" oninput="showValue(2,this.value)" />
+<input id="sliderup" type="range" min="0" max="360" value="0" step="1" class="slider-color" oninput="send_elem_slow(2+':'+this.value+',0',40,this);" onchange="send_elem_slow(2+':'+this.value+',0',0,this);" />
 <br>
   <div id='container'>
     <div id='item'> </div>
@@ -117,6 +117,50 @@ figure img{
 </div>
 
 <script>
+function send_elem_slow(txt,min_time_transmit,elem) {
+    var now = new Date().getTime();
+
+    if (elem.sendTimeout)
+    {
+       clearTimeout(elem.sendTimeout);
+       elem.sendTimeout = null;
+    }
+    if (ws.readyState !== WebSocket.OPEN) {
+      return;
+    }
+    if(elem.lastSend === undefined || now - elem.lastSend >= min_time_transmit) {
+        if (ws.bufferedAmount>0)
+        {
+          elem.lastText = txt;
+          elem.sendTimeout = setTimeout(function send_trafficjam() {
+            elem.sendTimeout = null;
+            send_elem_slow(sliderup.lastText,min_time_transmit,elem);
+          }, min_time_transmit);
+        }
+        else
+        {
+          try {
+            ws.send(txt);
+            elem.lastSend = new Date().getTime();
+            return;
+          } catch(e) {
+            console.log(e);
+          }
+        }
+    }
+    else
+    {
+        elem.lastText = txt;
+        var ms = elem.lastSend !== undefined ? min_time_transmit - (now - elem.lastSend) : min_time_transmit;
+        if(ms < 0)
+            ms = 0;
+        elem.sendTimeout = setTimeout(function send_waittransmit() {
+            elem.sendTimeout = null;
+            send_elem_slow(elem.lastText,min_time_transmit,elem);
+        }, ms);
+    }
+}
+
 var retransmitInterval;
 const connectiondisplay= document.getElementById('connectiondisplay');
 const view = document.getElementById('stream');
@@ -132,7 +176,7 @@ function connect_ws()
   ws.onopen = function() {
       connectiondisplay.textContent = "";
       onChangevideoswitch();
-      showValue(2,sliderup.value);
+      send_elem_slow(2+':'+sliderup.value+',0',0,sliderup);
       // TODO send position of joystick
 
       retransmitInterval=setInterval(function ws_onopen_ping() {
@@ -201,7 +245,7 @@ var initialX;
 var initialY;
 var xOffset = 0;
 var yOffset = 0;
-var lastText, lastSend, sendTimeout;
+
 container.addEventListener('touchstart', dragStart, false);
 container.addEventListener('touchend', dragEnd, false);
 container.addEventListener('touchmove', drag, false);
@@ -270,65 +314,13 @@ function drag(e) {
     }
 }
 
-function send(txt) {
-    const min_time_transmit = 40;
-    var now = new Date().getTime();
-
-    if (sendTimeout)
-    {
-       clearTimeout(sendTimeout);
-       sendTimeout = null;
-    }
-    if (ws.readyState !== WebSocket.OPEN) {
-      return;
-    }
-    if(lastSend === undefined || now - lastSend >= min_time_transmit) {
-        if (ws.bufferedAmount>0)
-        {
-          lastText = txt;
-          sendTimeout = setTimeout(function send_trafficjam() {
-            sendTimeout = null;
-            send(lastText);
-          }, min_time_transmit);
-        }
-        else
-        {
-          try {
-            ws.send(txt);
-            lastSend = new Date().getTime();
-            return;
-          } catch(e) {
-            console.log(e);
-          }
-        }
-    }
-    else
-    {
-        lastText = txt;
-        var ms = lastSend !== undefined ? min_time_transmit - (now - lastSend) : min_time_transmit;
-        if(ms < 0)
-            ms = 0;
-        sendTimeout = setTimeout(function send_waittransmit() {
-            sendTimeout = null;
-            send(lastText);
-        }, ms);
-    }
-}
-
 function setTranslate(xPos, yPos, el) {
     var transformstr = 'translate(' + xPos + 'px, ' + yPos + 'px)';
     el.style.transform = transformstr;
     el.style.webkitTransform = transformstr;
     var xval = xPos * 180 / (container.offsetWidth / joystickfactor);
     var yval = yPos * 180 / (container.offsetHeight / joystickfactor);
-    send('1:'+Math.round(xval) + ',' + Math.round(yval));
-}
-
-function showValue(id,v) {
-  if (ws.readyState !== WebSocket.OPEN) {
-    return;
-  }
-  ws.send(id+':'+v+',0');
+    send_elem_slow('1:'+Math.round(xval) + ',' + Math.round(yval),40,container);
 }
 
 </script>
