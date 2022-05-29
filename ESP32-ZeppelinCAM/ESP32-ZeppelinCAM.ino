@@ -390,6 +390,7 @@ void setup()
 
   // Connect to wifi
   WiFi.mode(WIFI_STA);
+  WiFi.setSleep(false);
   WiFi.begin(ssid, password);
 
   // Wait some time to connect to wifi
