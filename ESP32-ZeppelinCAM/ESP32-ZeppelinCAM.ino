@@ -1,4 +1,4 @@
-// ESP32 Board manager version 1.0.4
+// ESP32 Board manager version 1.0.6 or 2.0.3
 // Arduino IDE: Board = AIThinker ESP32-CAM
 
 #include <ArduinoWebsockets.h> // Install from Arduino library manager : "ArduinoWebsockets" by Gil Maimon, https://github.com/gilmaimon/ArduinoWebsockets
