@@ -177,6 +177,23 @@ void servo_write_channel(uint8_t channel, uint32_t value, uint32_t valueMax = 18
   ledcWrite(channel, duty);
 }
 
+void hbridge_halt()
+{
+  analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEA, PWMRANGE );
+  analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEB, PWMRANGE );
+}
+
+void hbridge_run(int16_t speed)
+{
+  if (speed >= 0) {
+    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEA, speed );
+    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEB, 0 ); // direction = forward
+  } else {
+    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEA, 0 ); // direction = backward
+    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEB, -speed );
+  }
+}
+
 void updateMotors()
 {
   if (motors_halt)
@@ -288,22 +305,6 @@ void camera_init()
 #endif
 }
 
-void hbridge_halt()
-{
-  analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEA, PWMRANGE );
-  analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEB, PWMRANGE );
-}
-
-void hbridge_run(int16_t speed)
-{
-  if (speed >= 0) {
-    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEA, speed );
-    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEB, 0 ); // direction = forward
-  } else {
-    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEA, 0 ); // direction = backward
-    analogwrite_channel(CHANNEL_ANALOGWRITE_HBRIDGEB, -speed );
-  }
-}
 
 
 void setup()
