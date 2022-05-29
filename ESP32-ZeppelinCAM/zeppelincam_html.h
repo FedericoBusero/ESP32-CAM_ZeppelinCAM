@@ -151,13 +151,10 @@ function send_elem_slow(txt,min_time_transmit,elem) {
     else
     {
         elem.lastText = txt;
-        var ms = elem.lastSend !== undefined ? min_time_transmit - (now - elem.lastSend) : min_time_transmit;
-        if(ms < 0)
-            ms = 0;
         elem.sendTimeout = setTimeout(function send_waittransmit() {
             elem.sendTimeout = null;
             send_elem_slow(elem.lastText,min_time_transmit,elem);
-        }, ms);
+        }, min_time_transmit - (now - elem.lastSend));
     }
 }
 
