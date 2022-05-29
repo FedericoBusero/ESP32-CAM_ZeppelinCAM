@@ -32,6 +32,8 @@ DNSServer dnsServer;
 
 #ifdef USE_CAMERA
 
+int videoswitch = 0;
+
 // video streaming setting
 #define MIN_TIME_PER_FRAME 200 // minimum time between video frames in ms e.g. minimum 200ms means max 5fps
 
@@ -441,6 +443,16 @@ void handleSlider(int value)
   updateMotors();
 }
 
+void handleSwitch(int value)
+{
+#ifdef DEBUG_SERIAL
+  DEBUG_SERIAL.print(F("handleSwitch value="));
+  DEBUG_SERIAL.println(value);
+#endif
+#ifdef USE_CAMERA
+  videoswitch = value;
+#endif
+}
 
 void handleJoystick(int x, int y)
 {
@@ -505,6 +517,9 @@ void handle_message(websockets::WebsocketsMessage msg) {
       break;
 
     case 2: handleSlider(param1);
+      break;
+        
+    case 3: handleSwitch(param1);
       break;
   }
 
@@ -593,19 +608,22 @@ void loop()
       sclient.poll(); // als return non-nul, dan is er iets ontvangen
 
 #ifdef USE_CAMERA
-      long currentmillis = millis();
-      if (currentmillis - millis_last_camera > MIN_TIME_PER_FRAME)
+      if (videoswitch)
       {
-        millis_last_camera = currentmillis;
+         long currentmillis = millis();
+         if (currentmillis - millis_last_camera > MIN_TIME_PER_FRAME)
+         {
+            millis_last_camera = currentmillis;
 
-        camera_init(); // if already initialised, returns quickly
-        fb = esp_camera_fb_get();
-        if (fb)
-        {
-          sclient.sendBinary((const char *)fb->buf, fb->len);
-          esp_camera_fb_return(fb);
-          fb = NULL;
-        }
+            camera_init(); // if already initialised, returns quickly
+            fb = esp_camera_fb_get();
+            if (fb)
+            {
+               sclient.sendBinary((const char *)fb->buf, fb->len);
+               esp_camera_fb_return(fb);
+               fb = NULL;
+            }
+         }
       }
 #endif
       updateMotors();
