@@ -134,7 +134,7 @@ function send_elem_slow(txt,min_time_transmit,elem) {
           elem.lastText = txt;
           elem.sendTimeout = setTimeout(function send_trafficjam() {
             elem.sendTimeout = null;
-            send_elem_slow(sliderup.lastText,min_time_transmit,elem);
+            send_elem_slow(elem.lastText,min_time_transmit,elem);
           }, min_time_transmit);
         }
         else
