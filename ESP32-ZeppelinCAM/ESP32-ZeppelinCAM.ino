@@ -1,5 +1,7 @@
 // ESP32 Board manager version 1.0.6 or 2.0.3
 // Arduino IDE: Board = AIThinker ESP32-CAM
+// Browser softAP: http://z.be or http://192.168.4.1
+
 
 #include <ArduinoWebsockets.h> // Install from Arduino library manager : "ArduinoWebsockets" by Gil Maimon, https://github.com/gilmaimon/ArduinoWebsockets
 #include <ESPAsyncWebServer.h> // https://github.com/me-no-dev/ESPAsyncWebServer && https://github.com/me-no-dev/AsyncTCP
@@ -377,7 +379,7 @@ void setup()
 #endif
   /* Setup the DNS server redirecting all the domains to the apIP */
   dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
-  dnsServer.start(53, "*", apIP);
+  dnsServer.start(53, "z.be", apIP);
 #else // USE_SOFTAP not defined
   WiFi.softAPdisconnect(true);
   // host_name = "BlimpCam-" + 6 hexadecimal values of MAC address
