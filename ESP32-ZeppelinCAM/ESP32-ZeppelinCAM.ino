@@ -1,4 +1,4 @@
-// ESP32 Board manager version 1.0.6 or 2.0.3
+// ESP32 Board manager version 1.0.6 or >=2.0.3
 // Arduino IDE: Board = AIThinker ESP32-CAM
 // Browser softAP: http://z.be or http://192.168.4.1
 
