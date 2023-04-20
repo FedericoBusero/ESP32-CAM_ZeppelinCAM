@@ -1,4 +1,4 @@
-// ESP32 Board manager version 1.0.6 or >=2.0.3
+// ESP32 Board manager version 1.0.6 or 2.0.8
 // Arduino IDE: Board = AIThinker ESP32-CAM
 // Browser softAP: http://z.be or http://192.168.4.1
 
@@ -40,22 +40,21 @@ int videoswitch = 0;
 #define MIN_TIME_PER_FRAME 200 // minimum time between video frames in ms e.g. minimum 200ms means max 5fps
 
 // ESP32-CAM pin definitions
-#define PWDN_GPIO_NUM     32
-#define RESET_GPIO_NUM    -1
-#define XCLK_GPIO_NUM      0
-#define SIOD_GPIO_NUM     26
-#define SIOC_GPIO_NUM     27
-#define Y9_GPIO_NUM       35
-#define Y8_GPIO_NUM       34
-#define Y7_GPIO_NUM       39
-#define Y6_GPIO_NUM       36
-#define Y5_GPIO_NUM       21
-#define Y4_GPIO_NUM       19
-#define Y3_GPIO_NUM       18
-#define Y2_GPIO_NUM        5
-#define VSYNC_GPIO_NUM    25
-#define HREF_GPIO_NUM     23
-#define PCLK_GPIO_NUM     22
+
+#define CAMERA_MODEL_AI_THINKER // Has PSRAM
+//#define CAMERA_MODEL_XIAO_ESP32S3 // Has PSRAM
+
+//#define CAMERA_MODEL_WROVER_KIT // Has PSRAM
+//#define CAMERA_MODEL_ESP_EYE // Has PSRAM
+//#define CAMERA_MODEL_ESP32S3_EYE // Has PSRAM
+//#define CAMERA_MODEL_M5STACK_PSRAM // Has PSRAM
+//#define CAMERA_MODEL_M5STACK_V2_PSRAM // M5Camera version B Has PSRAM
+//#define CAMERA_MODEL_M5STACK_WIDE // Has PSRAM
+//#define CAMERA_MODEL_M5STACK_ESP32CAM // No PSRAM
+//#define CAMERA_MODEL_M5STACK_UNITCAM // No PSRAM
+//#define CAMERA_MODEL_TTGO_T_JOURNAL // No PSRAM
+
+#include "camera_pins.h"
 
 camera_fb_t * fb = NULL;
 #endif
