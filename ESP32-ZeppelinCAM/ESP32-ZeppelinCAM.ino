@@ -9,7 +9,7 @@
 #include <WiFi.h>
 #include <driver/ledc.h>
 
-#define USE_CAMERA
+// #define USE_CAMERA
 #define DEBUG_SERIAL Serial
 
 #ifdef USE_CAMERA
@@ -32,14 +32,6 @@ DNSServer dnsServer;
 
 #include "zeppelincam_html.h" // Do not put html code in ino file to avoid problems with the preprocessor
 
-#ifdef USE_CAMERA
-boolean camera_initialised = false;
-int videoswitch = 0;
-
-// video streaming setting
-#define MIN_TIME_PER_FRAME 200 // minimum time between video frames in ms e.g. minimum 200ms means max 5fps
-
-
 #ifdef ARDUINO_XIAO_ESP32S3
 #define CAMERA_MODEL_XIAO_ESP32S3 // Has PSRAM
 
@@ -55,9 +47,25 @@ const int hbridgePinB = 4; // H-bridge pin B
 #define LED_ON true
 #define LED_OFF false
 
-#else // ARDUINO_XIAO_ESP32S3
+// end ARDUINO_XIAO_ESP32S3
 
+#elif defined(ARDUINO_LOLIN_C3_MINI)
+// Uncomment USE_CAMERA
+const int fwdPin = 2;  //Forward Motor Pin
 
+const int turnPin = 1;  //Steering Servo Pin
+#define SERVO_SWEEP_TIME 600 // in ms
+
+const int upPin = 5;  // Up Pin
+
+const int hbridgePinA = 3; // H-bridge pin A
+const int hbridgePinB = 4; // H-bridge pin B
+
+#define PIN_LED_DIGIT 6
+#define LED_ON true
+#define LED_OFF false
+
+#else // not ARDUINO_XIAO_ESP32S3, not ARDUINO_LOLIN_C3_MINI but another ESP32
 // AI-Thinker ESP32-CAM pin definitions
 
 #define CAMERA_MODEL_AI_THINKER // Has PSRAM
@@ -105,10 +113,17 @@ const int hbridgePinB = 14; // H-bridge pin B
 
 #endif // ARDUINO_XIAO_ESP32S3
 
+#ifdef USE_CAMERA
+boolean camera_initialised = false;
+int videoswitch = 0;
+
+// video streaming setting
+#define MIN_TIME_PER_FRAME 200 // minimum time between video frames in ms e.g. minimum 200ms means max 5fps
+
 #include "camera_pins.h"
 
 camera_fb_t * fb = NULL;
-#endif
+#endif // USE_CAMERA
 
 using namespace websockets;
 WebsocketsServer server;
@@ -123,7 +138,7 @@ WebsocketsClient sclient;
 long last_activity_message;
 
 
-#define MOTOR_TIME_UP 1000 // ms to go to ease to full power of a motor 
+#define MOTOR_TIME_UP 400 // ms to go to ease to full power of a motor 
 
 #include "Easer.h"
 Easer speedforward;
@@ -198,7 +213,7 @@ void servo_attach(uint8_t pin, ledc_channel_t channel)
 
 void servo_write_channel(uint8_t channel, uint32_t value, uint32_t valueMax = 180) {
   // calculate duty, 2047 from 2 ^ 11 - 1
-  uint32_t duty = (2047 / valueMax) * min(value, valueMax);
+  uint32_t duty = (2047 * min(value, valueMax))/ valueMax ;
   ledcWrite(channel, duty);
 }
 
