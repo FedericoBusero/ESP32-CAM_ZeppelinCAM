@@ -95,7 +95,11 @@ const int upPin = 15;  // Up Pin
 const int hbridgePinA = 13; // H-bridge pin A
 const int hbridgePinB = 14; // H-bridge pin B
 
-#define PIN_LED 4
+// #define PIN_LED_PWM 4
+
+//#define PIN_LED_DIGIT 4
+//#define LED_ON true
+//#define LED_OFF false
 
 #define MOTOR_TIME_UP 1000 // ms to go to ease to full power of a motor 
 
@@ -128,7 +132,11 @@ bool motors_halt;
 // Used by analogwrite: Forward & Up motor PWM)
 #define CHANNEL_ANALOGWRITE_FORWARD LEDC_CHANNEL_2  // Forward
 #define CHANNEL_ANALOGWRITE_UP      LEDC_CHANNEL_3  // Up motor
+
+#ifdef PIN_LED_PWM
 #define CHANNEL_ANALOGWRITE_LED  10 // LED BUILTIN, LEDC_CHANNEL_10 not definedd ??
+#endif
+
 // #define CHANNEL_ANALOGWRITE_X    LEDC_CHANNEL_11 // not definedd ??
 
 // Servo's: LEDC_TIMER_2, channels LEDC_CHANNEL_4,LEDC_CHANNEL_5,LEDC_CHANNEL_12,LEDC_CHANNEL_13
@@ -266,17 +274,24 @@ void camera_init()
   config.pin_sscb_scl = SIOC_GPIO_NUM;
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
-  config.xclk_freq_hz = 8000000;
-  config.pixel_format = PIXFORMAT_JPEG;
-  //init with high specs to pre-allocate larger buffers
+  config.xclk_freq_hz = 8000000; // Camerawebserver : 20000000
+  config.pixel_format = PIXFORMAT_JPEG; // for streaming
+
+  // if PSRAM IC present, init with UXGA resolution and higher JPEG quality
+  //                      for larger pre-allocated frame buffer.
   if (psramFound()) {
     config.frame_size = FRAMESIZE_UXGA;
     config.jpeg_quality = 10;
     config.fb_count = 2;
+    config.fb_location = CAMERA_FB_IN_PSRAM;
+    config.grab_mode = CAMERA_GRAB_LATEST;
   } else {
+    // Limit the frame size when PSRAM is not available
     config.frame_size = FRAMESIZE_SVGA;
     config.jpeg_quality = 12;
     config.fb_count = 1;
+    config.fb_location = CAMERA_FB_IN_DRAM;
+    config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
   }
 
   // camera init
@@ -300,7 +315,26 @@ void camera_init()
 #endif
 }
 
+void led_init()
+{
+#ifdef PIN_LED_PWM
+  pinMode(PIN_LED_PWM, OUTPUT);
+  analogwrite_attach(PIN_LED_PWM, CHANNEL_ANALOGWRITE_LED); // pin, channel
+#endif
+#ifdef PIN_LED_DIGIT
+  pinMode(PIN_LED_DIGIT, OUTPUT);
+#endif
+}
 
+void led_set(int ledmode)
+{
+#ifdef PIN_LED_PWM
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, ledmode);
+#endif
+#ifdef PIN_LED_DIGIT
+  digitalWrite(PIN_LED_DIGIT, ledmode == LED_BRIGHTNESS_OFF ? LED_OFF : LED_ON);
+#endif
+}
 
 void setup()
 {
@@ -320,17 +354,15 @@ void setup()
   analogwrite_attach(hbridgePinA, CHANNEL_ANALOGWRITE_HBRIDGEA); // pin, channel
   analogwrite_attach(hbridgePinB, CHANNEL_ANALOGWRITE_HBRIDGEB); // pin, channel
 
-  pinMode(PIN_LED, OUTPUT);
-  analogwrite_attach(PIN_LED, CHANNEL_ANALOGWRITE_LED); // pin, channel
-
+  led_init();
   // flash 2 time to show we are rebooting
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_BOOT);
+  led_set(LED_BRIGHTNESS_BOOT);
   delay(10);
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_OFF);
+  led_set(LED_BRIGHTNESS_OFF);
   delay(100);
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_BOOT);
+  led_set(LED_BRIGHTNESS_BOOT);
   delay(10);
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_OFF);
+  led_set(LED_BRIGHTNESS_OFF);
 
   // steering servo PWM
   servo_attach(turnPin, CHANNEL_SERVO1); // pin, channel
@@ -501,7 +533,7 @@ void handle_message(websockets::WebsocketsMessage msg) {
   DEBUG_SERIAL.println(param2);
 #endif
 
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_HANDLEMESSAGE);
+  led_set(LED_BRIGHTNESS_HANDLEMESSAGE);
 
   last_activity_message = millis();
 
@@ -559,7 +591,7 @@ void init_motors()
 
 void onConnect()
 {
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_CONNECTED);
+  led_set(LED_BRIGHTNESS_CONNECTED);
 
 #ifdef DEBUG_SERIAL
   DEBUG_SERIAL.println(F("onConnect"));
@@ -586,7 +618,7 @@ void loop()
 
   if (millis() > last_activity_message + TIMEOUT_MS_LED)
   {
-    analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_OFF);
+    led_set(LED_BRIGHTNESS_OFF);
   }
 
   if (millis() > last_activity_message + TIMEOUT_MS_MOTORS)
@@ -655,6 +687,6 @@ void loop()
 
   if (!is_connected)
   {
-    analogwrite_channel(CHANNEL_ANALOGWRITE_LED, (millis() % 1000) > 500 ? LED_BRIGHTNESS_NO_CONNECTION : LED_BRIGHTNESS_OFF);
+    led_set((millis() % 1000) > 500 ? LED_BRIGHTNESS_NO_CONNECTION : LED_BRIGHTNESS_OFF);
   }
 }
