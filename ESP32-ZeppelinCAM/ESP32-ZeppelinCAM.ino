@@ -9,7 +9,7 @@
 #include <WiFi.h>
 #include <driver/ledc.h>
 
-// #define USE_CAMERA
+#define USE_CAMERA
 #define DEBUG_SERIAL Serial
 
 #ifdef USE_CAMERA
