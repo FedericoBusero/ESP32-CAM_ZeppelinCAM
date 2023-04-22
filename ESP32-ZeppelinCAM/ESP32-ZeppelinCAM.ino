@@ -35,17 +35,17 @@ DNSServer dnsServer;
 #ifdef ARDUINO_XIAO_ESP32S3
 #define CAMERA_MODEL_XIAO_ESP32S3 // Has PSRAM
 
-const int fwdPin = 2;  //Forward Motor Pin
-const int turnPin = 1;  //Steering Servo Pin
+const int fwdPin = D2;  //Forward Motor Pin
+const int turnPin = D1;  //Steering Servo Pin
 #define SERVO_SWEEP_TIME 600 // in ms
 
-const int upPin = 5;  // Up Pin
-const int hbridgePinA = 3; // H-bridge pin A
-const int hbridgePinB = 4; // H-bridge pin B
+const int upPin = D5;  // Up Pin
+const int hbridgePinA = D3; // H-bridge pin A
+const int hbridgePinB = D4; // H-bridge pin B
 
-#define PIN_LED_DIGIT 21
-#define LED_ON true
-#define LED_OFF false
+#define PIN_LED_DIGIT LED_BUILTIN
+#define LED_ON LOW
+#define LED_OFF HIGH
 
 // end ARDUINO_XIAO_ESP32S3
 
@@ -62,8 +62,8 @@ const int hbridgePinA = 3; // H-bridge pin A
 const int hbridgePinB = 4; // H-bridge pin B
 
 #define PIN_LED_DIGIT 6
-#define LED_ON true
-#define LED_OFF false
+#define LED_ON HIGH
+#define LED_OFF LOW
 
 #else // not ARDUINO_XIAO_ESP32S3, not ARDUINO_LOLIN_C3_MINI but another ESP32
 // AI-Thinker ESP32-CAM pin definitions
@@ -108,8 +108,8 @@ const int hbridgePinB = 14; // H-bridge pin B
 #define PIN_LED_PWM 4
 
 //#define PIN_LED_DIGIT 4
-//#define LED_ON true
-//#define LED_OFF false
+//#define LED_ON HIGH
+//#define LED_OFF LOW
 
 #endif // ARDUINO_XIAO_ESP32S3
 
