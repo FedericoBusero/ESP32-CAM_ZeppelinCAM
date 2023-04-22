@@ -583,7 +583,7 @@ void onDisconnect()
 
 void loop()
 {
-  static unsigned long millis_last_camera = 0;
+  static unsigned long millis_next_camera = 0;
   static int is_connected = 0;
 
 #if defined(USE_SOFTAP)
@@ -614,11 +614,8 @@ void loop()
 #ifdef USE_CAMERA
       if (videoswitch)
       {
-        long currentmillis = millis();
-        if (currentmillis - millis_last_camera > MIN_TIME_PER_FRAME)
+        if (millis() >= millis_next_camera )
         {
-          millis_last_camera = currentmillis;
-
           camera_init(); // if already initialised, returns quickly
           fb = esp_camera_fb_get();
           if (fb)
@@ -627,6 +624,7 @@ void loop()
             esp_camera_fb_return(fb);
             fb = NULL;
           }
+          millis_next_camera = millis() + MIN_TIME_PER_FRAME;
         }
       }
 #endif
