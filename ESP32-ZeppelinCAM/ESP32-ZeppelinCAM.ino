@@ -33,7 +33,7 @@ DNSServer dnsServer;
 #include "zeppelincam_html.h" // Do not put html code in ino file to avoid problems with the preprocessor
 
 #ifdef USE_CAMERA
-
+boolean camera_initialised = false;
 int videoswitch = 0;
 
 // video streaming setting
@@ -247,12 +247,6 @@ void updateMotors()
 void camera_init()
 {
 #ifdef USE_CAMERA
-  static boolean camera_initialised = false;
-
-  if (camera_initialised) {
-    return;
-  }
-
   camera_config_t config;
   config.ledc_channel = CHANNEL_CAMERA;
   config.ledc_timer = TIMER_CAMERA;
@@ -614,9 +608,13 @@ void loop()
 #ifdef USE_CAMERA
       if (videoswitch)
       {
-        if (millis() >= millis_next_camera )
+        if (!camera_initialised)
         {
           camera_init(); // if already initialised, returns quickly
+          millis_next_camera = millis() + 500; // wait some time after camera initialisation before taking first picture
+        }
+        if (millis() >= millis_next_camera )
+        {
           fb = esp_camera_fb_get();
           if (fb)
           {
