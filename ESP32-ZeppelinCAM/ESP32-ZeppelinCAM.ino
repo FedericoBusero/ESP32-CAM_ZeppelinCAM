@@ -210,7 +210,7 @@ void updateMotors()
 
     // L/R motor
     hbridge_halt();
-  
+
   }
   else
   {
@@ -218,22 +218,22 @@ void updateMotors()
     speedforward.update();
     speedLR.update();
     speed_up.update();
-/*
-#ifdef DEBUG_SERIAL
-    DEBUG_SERIAL.print(F("updateMotors servo_angle="));
-    DEBUG_SERIAL.print(servo_angle.getCurrentValue());
-    DEBUG_SERIAL.print(F(" speedforward="));
-    DEBUG_SERIAL.print(speedforward.getCurrentValue());
-    DEBUG_SERIAL.print(F(" speedLR="));
-    DEBUG_SERIAL.print(speedLR.getCurrentValue());
-    DEBUG_SERIAL.print(F(" speed_up="));
-    DEBUG_SERIAL.print(speed_up.getCurrentValue());
-    DEBUG_SERIAL.println();
-#endif
-*/
+    /*
+      #ifdef DEBUG_SERIAL
+        DEBUG_SERIAL.print(F("updateMotors servo_angle="));
+        DEBUG_SERIAL.print(servo_angle.getCurrentValue());
+        DEBUG_SERIAL.print(F(" speedforward="));
+        DEBUG_SERIAL.print(speedforward.getCurrentValue());
+        DEBUG_SERIAL.print(F(" speedLR="));
+        DEBUG_SERIAL.print(speedLR.getCurrentValue());
+        DEBUG_SERIAL.print(F(" speed_up="));
+        DEBUG_SERIAL.print(speed_up.getCurrentValue());
+        DEBUG_SERIAL.println();
+      #endif
+    */
     // servo
     servo_write_channel(CHANNEL_SERVO1, servo_angle.getCurrentValue());
-     
+
     hbridge_run(speedLR.getCurrentValue());
 
     // up motor
@@ -310,7 +310,7 @@ void camera_init()
 
 void setup()
 {
-  delay(200);   
+  delay(200);
 #ifdef DEBUG_SERIAL
   DEBUG_SERIAL.begin(115200);
   DEBUG_SERIAL.println(F("\nZeppelinCAM started"));
@@ -330,13 +330,13 @@ void setup()
   analogwrite_attach(PIN_LED, CHANNEL_ANALOGWRITE_LED); // pin, channel
 
   // flash 2 time to show we are rebooting
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_BOOT); 
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_BOOT);
   delay(10);
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_OFF); 
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_OFF);
   delay(100);
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_BOOT); 
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_BOOT);
   delay(10);
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_OFF); 
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_OFF);
 
   // steering servo PWM
   servo_attach(turnPin, CHANNEL_SERVO1); // pin, channel
@@ -351,14 +351,14 @@ void setup()
 
   speed_up.begin(0, false);
   speed_up.set_speed((float)MOTOR_TIME_UP / (float)PWMRANGE);
- 
+
   init_motors();
 
   // Don't call camera_init, in case of low power it should be possible to control the motors and let the camera switched off
 
   // Wifi setup
   WiFi.persistent(true);
-   
+
   uint8_t macAddr[6];
   WiFi.macAddress(macAddr);
 #if defined(USE_SOFTAP)
@@ -415,10 +415,10 @@ void setup()
     return;
   }
 
-  
+
   MDNS.addService("http", "tcp", 80); // Add http service to MDNS-SD
   MDNS.addService("ws", "tcp", 82); // Add websocket service to MDNS-SD
-   
+
 #endif // USE_SOFTAP
 
   webserver.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
@@ -507,7 +507,7 @@ void handle_message(websockets::WebsocketsMessage msg) {
   DEBUG_SERIAL.println(param2);
 #endif
 
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_HANDLEMESSAGE); 
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_HANDLEMESSAGE);
 
   last_activity_message = millis();
 
@@ -522,7 +522,7 @@ void handle_message(websockets::WebsocketsMessage msg) {
 
     case 2: handleSlider(param1);
       break;
-        
+
     case 3: handleSwitch(param1);
       break;
   }
@@ -565,7 +565,7 @@ void init_motors()
 
 void onConnect()
 {
-  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_CONNECTED); 
+  analogwrite_channel(CHANNEL_ANALOGWRITE_LED, LED_BRIGHTNESS_CONNECTED);
 
 #ifdef DEBUG_SERIAL
   DEBUG_SERIAL.println(F("onConnect"));
@@ -614,20 +614,20 @@ void loop()
 #ifdef USE_CAMERA
       if (videoswitch)
       {
-         long currentmillis = millis();
-         if (currentmillis - millis_last_camera > MIN_TIME_PER_FRAME)
-         {
-            millis_last_camera = currentmillis;
+        long currentmillis = millis();
+        if (currentmillis - millis_last_camera > MIN_TIME_PER_FRAME)
+        {
+          millis_last_camera = currentmillis;
 
-            camera_init(); // if already initialised, returns quickly
-            fb = esp_camera_fb_get();
-            if (fb)
-            {
-               sclient.sendBinary((const char *)fb->buf, fb->len);
-               esp_camera_fb_return(fb);
-               fb = NULL;
-            }
-         }
+          camera_init(); // if already initialised, returns quickly
+          fb = esp_camera_fb_get();
+          if (fb)
+          {
+            sclient.sendBinary((const char *)fb->buf, fb->len);
+            esp_camera_fb_return(fb);
+            fb = NULL;
+          }
+        }
       }
 #endif
       updateMotors();
@@ -645,8 +645,8 @@ void loop()
     DEBUG_SERIAL.print(F("server.poll is_connected="));
     DEBUG_SERIAL.println(is_connected);
 #endif
-    if (is_connected) { 
-       sclient.send("CLOSE");
+    if (is_connected) {
+      sclient.send("CLOSE");
     }
     sclient = server.accept();
 #ifdef DEBUG_SERIAL
@@ -659,7 +659,6 @@ void loop()
 
   if (!is_connected)
   {
-    analogwrite_channel(CHANNEL_ANALOGWRITE_LED, (millis() % 1000) > 500 ? LED_BRIGHTNESS_NO_CONNECTION : LED_BRIGHTNESS_OFF); 
+    analogwrite_channel(CHANNEL_ANALOGWRITE_LED, (millis() % 1000) > 500 ? LED_BRIGHTNESS_NO_CONNECTION : LED_BRIGHTNESS_OFF);
   }
-  delay(2);
 }
