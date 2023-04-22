@@ -95,7 +95,7 @@ const int upPin = 15;  // Up Pin
 const int hbridgePinA = 13; // H-bridge pin A
 const int hbridgePinB = 14; // H-bridge pin B
 
-// #define PIN_LED_PWM 4
+#define PIN_LED_PWM 4
 
 //#define PIN_LED_DIGIT 4
 //#define LED_ON true
