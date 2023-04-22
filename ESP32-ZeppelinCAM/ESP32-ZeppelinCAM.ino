@@ -123,35 +123,29 @@ bool motors_halt;
 
 // Channel & timer allocation table
 
-// LEDC_TIMER_0, channels LEDC_CHANNEL_0,LEDC_CHANNEL_1,LEDC_CHANNEL_8,LEDC_CHANNEL_9
-// Used by camera
-#define TIMER_CAMERA LEDC_TIMER_0
-#define CHANNEL_CAMERA   LEDC_CHANNEL_0
+// LEDC_TIMER_0, channels 0, 1, 8, 9
+// Used for H-bridge
+#define CHANNEL_ANALOGWRITE_HBRIDGEA LEDC_CHANNEL_0 // h-bridge pin A
+#define CHANNEL_ANALOGWRITE_HBRIDGEB LEDC_CHANNEL_1 // h-bridge pin B
 
-// LEDC_TIMER_1, channels LEDC_CHANNEL_2,LEDC_CHANNEL_3, LEDC_CHANNEL_10,LEDC_CHANNEL_11
+// LEDC_TIMER_1, channels 2, 3, 10, 11
 // Used by analogwrite: Forward & Up motor PWM)
 #define CHANNEL_ANALOGWRITE_FORWARD LEDC_CHANNEL_2  // Forward
 #define CHANNEL_ANALOGWRITE_UP      LEDC_CHANNEL_3  // Up motor
 
 #ifdef PIN_LED_PWM
-#define CHANNEL_ANALOGWRITE_LED  10 // LED BUILTIN, LEDC_CHANNEL_10 not definedd ??
+#define CHANNEL_ANALOGWRITE_LED  10 // LED BUILTIN, channel 10 only available on ESP32, not C3/S3/...
 #endif
 
-// #define CHANNEL_ANALOGWRITE_X    LEDC_CHANNEL_11 // not definedd ??
-
-// Servo's: LEDC_TIMER_2, channels LEDC_CHANNEL_4,LEDC_CHANNEL_5,LEDC_CHANNEL_12,LEDC_CHANNEL_13
+// Servo's: LEDC_TIMER_2, channels 4, 5, 12, 13
 // Used by servo
 #define CHANNEL_SERVO1   LEDC_CHANNEL_4
 // #define CHANNEL_SERVO2   LEDC_CHANNEL_5
-// #define CHANNEL_SERVO3   LEDC_CHANNEL_12 // not definedd ??
-// #define CHANNEL_SERVO4   LEDC_CHANNEL_13 // not definedd ??
 
-// LEDC_TIMER_3, channels LEDC_CHANNEL_6,LEDC_CHANNEL_7,LEDC_CHANNEL_14,LEDC_CHANNEL_15
-// Used for H-bridge
-#define CHANNEL_ANALOGWRITE_HBRIDGEA LEDC_CHANNEL_6 // h-bridge pin A
-#define CHANNEL_ANALOGWRITE_HBRIDGEB LEDC_CHANNEL_7 // h-bridge pin B
-// #define CHANNEL_ANALOGWRITE_X LEDC_CHANNEL_14 // not definedd ??
-// #define CHANNEL_ANALOGWRITE_X LEDC_CHANNEL_15 // not definedd ??
+// LEDC_TIMER_3, channels 6, 7, 14, 15. Timer not available on ESP32C3
+// Used by camera
+#define TIMER_CAMERA LEDC_TIMER_3
+#define CHANNEL_CAMERA   LEDC_CHANNEL_6
 
 // ESP32 analogwrite functions
 // void analogwrite_attach(uint8_t pin, ledc_channel_t channel)
