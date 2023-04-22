@@ -39,7 +39,26 @@ int videoswitch = 0;
 // video streaming setting
 #define MIN_TIME_PER_FRAME 200 // minimum time between video frames in ms e.g. minimum 200ms means max 5fps
 
-// ESP32-CAM pin definitions
+
+#ifdef ARDUINO_XIAO_ESP32S3
+#define CAMERA_MODEL_XIAO_ESP32S3 // Has PSRAM
+
+const int fwdPin = 2;  //Forward Motor Pin
+const int turnPin = 1;  //Steering Servo Pin
+#define SERVO_SWEEP_TIME 600 // in ms
+
+const int upPin = 5;  // Up Pin
+const int hbridgePinA = 3; // H-bridge pin A
+const int hbridgePinB = 4; // H-bridge pin B
+
+#define PIN_LED_DIGIT 21
+#define LED_ON true
+#define LED_OFF false
+
+#else // ARDUINO_XIAO_ESP32S3
+
+
+// AI-Thinker ESP32-CAM pin definitions
 
 #define CAMERA_MODEL_AI_THINKER // Has PSRAM
 //#define CAMERA_MODEL_XIAO_ESP32S3 // Has PSRAM
@@ -53,23 +72,6 @@ int videoswitch = 0;
 //#define CAMERA_MODEL_M5STACK_ESP32CAM // No PSRAM
 //#define CAMERA_MODEL_M5STACK_UNITCAM // No PSRAM
 //#define CAMERA_MODEL_TTGO_T_JOURNAL // No PSRAM
-
-#include "camera_pins.h"
-
-camera_fb_t * fb = NULL;
-#endif
-
-using namespace websockets;
-WebsocketsServer server;
-AsyncWebServer webserver(80);
-WebsocketsClient sclient;
-
-
-// timeoutes
-#define TIMEOUT_MS_MOTORS 2500L // Safety shutdown: motors will go to power off position after x milliseconds no message received
-#define TIMEOUT_MS_LED 1L        // LED will light up for x milliseconds after message received
-
-long last_activity_message;
 
 // Motor pin allocation
 // Lijken te werken: 2, 12, 13, 14, 15
@@ -100,6 +102,26 @@ const int hbridgePinB = 14; // H-bridge pin B
 //#define PIN_LED_DIGIT 4
 //#define LED_ON true
 //#define LED_OFF false
+
+#endif // ARDUINO_XIAO_ESP32S3
+
+#include "camera_pins.h"
+
+camera_fb_t * fb = NULL;
+#endif
+
+using namespace websockets;
+WebsocketsServer server;
+AsyncWebServer webserver(80);
+WebsocketsClient sclient;
+
+
+// timeoutes
+#define TIMEOUT_MS_MOTORS 2500L // Safety shutdown: motors will go to power off position after x milliseconds no message received
+#define TIMEOUT_MS_LED 1L        // LED will light up for x milliseconds after message received
+
+long last_activity_message;
+
 
 #define MOTOR_TIME_UP 1000 // ms to go to ease to full power of a motor 
 
@@ -170,13 +192,13 @@ void analogwrite_channel(int channel, uint32_t value) {
 
 void servo_attach(uint8_t pin, ledc_channel_t channel)
 {
-  ledcSetup(channel, 50, LEDC_TIMER_16_BIT); //channel, freq, resolution
+  ledcSetup(channel, 50, LEDC_TIMER_14_BIT); //channel, freq, resolution
   ledcAttachPin(pin, channel); // pin, channel
 }
 
 void servo_write_channel(uint8_t channel, uint32_t value, uint32_t valueMax = 180) {
-  // calculate duty, 8191 from 2 ^ 13 - 1
-  uint32_t duty = (8191 / valueMax) * min(value, valueMax);
+  // calculate duty, 2047 from 2 ^ 11 - 1
+  uint32_t duty = (2047 / valueMax) * min(value, valueMax);
   ledcWrite(channel, duty);
 }
 
