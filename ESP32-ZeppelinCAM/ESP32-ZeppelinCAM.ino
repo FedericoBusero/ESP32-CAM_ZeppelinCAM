@@ -123,7 +123,7 @@ WebsocketsClient sclient;
 
 // timeoutes
 #define TIMEOUT_MS_MOTORS 2500L // Safety shutdown: motors will go to power off position after x milliseconds no message received
-#define TIMEOUT_MS_LED 1L        // LED will light up for x milliseconds after message received
+#define TIMEOUT_MS_LED 2L       // LED will light up for x milliseconds after message received
 
 long last_activity_message;
 
