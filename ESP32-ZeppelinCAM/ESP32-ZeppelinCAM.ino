@@ -10,7 +10,7 @@
 #include <driver/ledc.h>
 
 #define USE_CAMERA
-#define DEBUG_SERIAL Serial
+// #define DEBUG_SERIAL Serial
 
 #ifdef USE_CAMERA
 #include "esp_camera.h"
