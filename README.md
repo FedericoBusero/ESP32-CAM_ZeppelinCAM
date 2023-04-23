@@ -8,9 +8,10 @@ It is developped and tested on following platforms, but it is easy to adapt for 
 
 ## Arduino libraries & version
 - ESP32 Arduino board version 2.0.8
-- AsyncTCP: can be installed from https://github.com/me-no-dev/AsyncTCP (or better version 1.1.4 from Arduino IDE library from dvarrel?)
-- ArduinoWebsockets version 0.5.3 by Gil Maimon, which van be installed from the Arduino Library manager: https://github.com/gilmaimon/ArduinoWebsockets
-- ESPAsyncWebServer, can be found on https://github.com/me-no-dev/ESPAsyncWebServer (of better the Arduino library version 1.2.6 from dvarrel?)
+- Install following libraries in the Arduin IDE Library manager
+  - AsyncTCP: version 1.1.4 by dvarrel
+  - ArduinoWebsockets version 0.5.3 by Gil Maimon
+  - ESPAsyncWebSrv, version 1.2.6 by dvarrel
 
 ## Inspiration
 I got inspired by following examples
