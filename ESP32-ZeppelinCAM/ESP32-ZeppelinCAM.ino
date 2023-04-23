@@ -37,8 +37,6 @@ DNSServer dnsServer;
 
 const int fwdPin = D2;  //Forward Motor Pin
 const int turnPin = D1;  //Steering Servo Pin
-#define SERVO_SWEEP_TIME 600 // in ms
-
 const int upPin = D5;  // Up Pin
 const int hbridgePinA = D3; // H-bridge pin A
 const int hbridgePinB = D4; // H-bridge pin B
@@ -52,12 +50,8 @@ const int hbridgePinB = D4; // H-bridge pin B
 #elif defined(ARDUINO_LOLIN_C3_MINI)
 // Uncomment USE_CAMERA
 const int fwdPin = 2;  //Forward Motor Pin
-
 const int turnPin = 1;  //Steering Servo Pin
-#define SERVO_SWEEP_TIME 600 // in ms
-
 const int upPin = 5;  // Up Pin
-
 const int hbridgePinA = 3; // H-bridge pin A
 const int hbridgePinB = 4; // H-bridge pin B
 
@@ -96,12 +90,8 @@ const int hbridgePinB = 4; // H-bridge pin B
 */
 
 const int fwdPin = 2;  //Forward Motor Pin
-
 const int turnPin = 12;  //Steering Servo Pin
-#define SERVO_SWEEP_TIME 600 // in ms
-
 const int upPin = 15;  // Up Pin
-
 const int hbridgePinA = 13; // H-bridge pin A
 const int hbridgePinB = 14; // H-bridge pin B
 
@@ -137,8 +127,8 @@ WebsocketsClient sclient;
 
 long last_activity_message;
 
-
-#define MOTOR_TIME_UP 400 // ms to go to ease to full power of a motor 
+#define MOTOR_TIME_UP 300 // ms to go to ease to full power of a motor 
+#define SERVO_SWEEP_TIME 300 // in ms
 
 #include "Easer.h"
 Easer speedforward;
