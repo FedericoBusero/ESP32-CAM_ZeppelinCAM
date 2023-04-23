@@ -203,7 +203,7 @@ void servo_attach(uint8_t pin, ledc_channel_t channel)
 
 void servo_write_channel(uint8_t channel, uint32_t value, uint32_t valueMax = 180) {
   // calculate duty, 2047 from 2 ^ 11 - 1
-  uint32_t duty = (2047 * min(value, valueMax))/ valueMax ;
+  uint32_t duty = (2047 * min(value, valueMax)) / valueMax ;
   ledcWrite(channel, duty);
 }
 
@@ -298,7 +298,7 @@ void camera_init()
 #ifdef ARDUINO_XIAO_ESP32S3
   config.xclk_freq_hz = 20000000;
 #else
-  config.xclk_freq_hz =  8000000;
+  config.xclk_freq_hz = 8000000;
 #endif
   config.pixel_format = PIXFORMAT_JPEG; // for streaming
 
