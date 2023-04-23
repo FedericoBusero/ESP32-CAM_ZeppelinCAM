@@ -10,7 +10,7 @@ ESP32CAM: Control motors and servo and stream video of a mini Blimp/Zepplin to y
 
 ## Browser User interface 
 ![Blimp_Zeppelin_cam_xiao_esp32s3_joystick.jpg](Blimp_Zeppelin_cam_xiao_esp32s3_joystick.jpg "ZeppelinCAM user interface")
-The user interface can by accessed from the browser (http://z.be or http://192.168.4.1)
+
 - Check box: switch on camera (default off, so that zeppelin can still be controlled in case of low battery)
 - camera view
 - slider: control up motor
@@ -22,6 +22,33 @@ The user interface can by accessed from the browser (http://z.be or http://192.1
 It is developped and tested on following platforms, but it is easy to adapt for other chips. 
 - AI-Thinker ESP32CAM
 - XIAO ESP32S3 Sense
+
+Motors
+- 1 motor to go up (1-directional)
+- 1 motor to go forward (1-directional)
+- To turn you can chose between
+  - a motor using h-bridge (2-directional) and/or
+  - a servo
+
+## Pin allocation ESP32CAM and others
+| Pin name                  | GPIO     |                                        |
+| ------------------------- | -------- | -------------------------------------- |
+| fwdPin                    |       2  | Motor forward                          |
+| upPin                     |      15  | Motor up                               |
+| hbridgePinA & hbridgePinB | 13 & 14  | H-bridge for left/right steering motor |
+| turnPin                   |      12  | Left/right steering servo              |
+
+In case you want to test on an ESP32 chip without camera, uncomment the definition of USE_CAMERA
+
+## Pin allocation XIAO ESP32S3 Sense
+| Pin name                  | Pin     |                                        |
+| ------------------------- | ------- | -------------------------------------- |
+| fwdPin                    |      D2 | Motor forward                          |
+| upPin                     |      D5 | Motor up                               |
+| hbridgePinA & hbridgePinB | D3 & D4 | H-bridge for left/right steering motor |
+| turnPin                   |      D1 | Left/right steering servo              |
+
+
 
 ## Arduino libraries & version
 - ESP32 Arduino board version 2.0.8
