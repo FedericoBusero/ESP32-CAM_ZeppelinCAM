@@ -305,7 +305,11 @@ void camera_init()
   config.pin_sscb_scl = SIOC_GPIO_NUM;
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
-  config.xclk_freq_hz = 8000000; // Camerawebserver : 20000000
+#ifdef ARDUINO_XIAO_ESP32S3
+  config.xclk_freq_hz = 20000000;
+#else
+   config.xclk_freq_hz = 8000000;
+#endif
   config.pixel_format = PIXFORMAT_JPEG; // for streaming
 
   // if PSRAM IC present, init with UXGA resolution and higher JPEG quality
