@@ -1,10 +1,10 @@
-// ESP32 Board manager version 1.0.6 or 2.0.8
-// Arduino IDE: Board = AIThinker ESP32-CAM
+// ESP32 Board manager version 2.0.8
+// Arduino IDE: Board = AIThinker ESP32-CAM, XIAO_ESP32S3, ...
 // Browser softAP: http://z.be or http://192.168.4.1
 
 
-#include <ArduinoWebsockets.h> // Install from Arduino library manager : "ArduinoWebsockets" by Gil Maimon, https://github.com/gilmaimon/ArduinoWebsockets
-#include <ESPAsyncWebServer.h> // https://github.com/me-no-dev/ESPAsyncWebServer && https://github.com/me-no-dev/AsyncTCP
+#include <ArduinoWebsockets.h>
+#include <ESPAsyncWebSrv.h> 
 
 #include <WiFi.h>
 #include <driver/ledc.h>
