@@ -308,6 +308,7 @@ void camera_init()
     config.frame_size = FRAMESIZE_UXGA;
     config.jpeg_quality = 10;
     config.fb_count = 2;
+    // TODO #if Arduino ESP32 board version: arduino 1.0.6,2.0.0 not include, >=2.0.1 include fb_location & grab_mode
     config.fb_location = CAMERA_FB_IN_PSRAM;
     config.grab_mode = CAMERA_GRAB_LATEST;
   } else {
@@ -315,6 +316,7 @@ void camera_init()
     config.frame_size = FRAMESIZE_SVGA;
     config.jpeg_quality = 12;
     config.fb_count = 1;
+    // TODO #if Arduino ESP32 board version: arduino 1.0.6,2.0.0 not include, >=2.0.1 include fb_location & grab_mode
     config.fb_location = CAMERA_FB_IN_DRAM;
     config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
   }
