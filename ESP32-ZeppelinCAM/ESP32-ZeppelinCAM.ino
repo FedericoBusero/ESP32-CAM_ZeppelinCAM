@@ -75,20 +75,6 @@ const int hbridgePinB = 4; // H-bridge pin B
 //#define CAMERA_MODEL_M5STACK_UNITCAM // No PSRAM
 //#define CAMERA_MODEL_TTGO_T_JOURNAL // No PSRAM
 
-// Motor pin allocation
-// Lijken te werken: 2, 12, 13, 14, 15
-// Lijkt niet te werken: 16 (doet boel crashen)
-// Werkt ook: 4 dat is LED_BUILTIN
-// Nog niet getest: 0 (daar zit boot flash pin op en is geen pwm denk ik. Ook gebruikt door camera XCLK_GPIO_NUM ?), 1&3 (rx & tx)
-/*
-   Volgende pinnen gebruikt tijdens booten
-   - 0
-   - 2
-   - 12 If driven High, flash voltage (VDD_SDIO) is 1.8V not default 3.3V. Has internal pull-down, so unconnected = Low = 3.3V. May prevent flashing and/or booting if 3.3V flash is used and this pin is pulled high, causing the flash to brownout. See the ESP32 datasheet for more details.
-     Om permanent dit gedrag uit te schakelen: espefuse.py set_flash_voltage 3.3V
-   - 15 If driven Low, silences boot messages printed by the ROM bootloader. Has an internal pull-up, so unconnected = High = normal output.
-*/
-
 const int fwdPin = 2;  //Forward Motor Pin
 const int turnPin = 12;  //Steering Servo Pin
 const int upPin = 15;  // Up Pin
