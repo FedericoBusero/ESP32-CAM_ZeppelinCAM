@@ -1,5 +1,5 @@
 # ESP32-CAM_ZeppelinCAM
-ESP32CAM: Control motors and stream video of a mini Blimp/Zepplin
+ESP32CAM: Control motors and servo and stream video of a mini Blimp/Zepplin to your browser. The motors are controlled by one slider and one joystick.
 
 ## Hardware
 It is developped and tested on following platforms, but it is easy to adapt for other chips. 
