@@ -26,7 +26,7 @@ It is developped and tested on following platforms, but it is easy to adapt for 
 Motors
 - 1 motor to go up (1-directional)
 - 1 motor to go forward (1-directional)
-- To turn you can chose between
+- To turn you can choose between
   - a motor using h-bridge (2-directional) and/or
   - a servo
 
