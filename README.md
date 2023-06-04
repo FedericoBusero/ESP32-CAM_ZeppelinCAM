@@ -19,7 +19,7 @@ ESP32CAM: Control motors and servo and stream video of a mini Blimp/Zeppelin to 
   - up: forward motor. Remark only the upper part is used, the zeppelin can only move forward (not backward)
 
 ## Hardware
-It is developped and tested on following platforms, but it is easy to adapt for other chips. 
+It has been developped and tested on following platforms, but it is easy to adapt for other chips:
 - AI-Thinker ESP32CAM
 - XIAO ESP32S3 Sense
 
@@ -29,6 +29,15 @@ Motors
 - To turn you can choose between
   - a motor using h-bridge (2-directional) and/or
   - a servo
+
+Shopping list used in ESP32-S3 setup:
+- motors: 4 * 8mm Coreless DC Motor : https://www.aliexpress.com/item/32871146089.html
+- Propellors : 30mm For 0.7mm shaft Tail Rotor Spare Parts Propellers : https://www.aliexpress.com/item/4000108963651.html
+- battery: https://www.aliexpress.com/item/1005001860198745.html
+- connector for battery: JST 1.25mm 2 Pin Micro Connector: https://www.aliexpress.com/item/33027366342.html
+- balloon: https://www.ballonsupermarkt-onlineshop.de/folienballons/folienballons-ungefullt/luftballons-aus-folie-grosse-buchstaben-100-cm/buchstaben-luftballons-aus-folie-silber-100-cm.html
+
+The parts for ESP32CAM are similar, but remark that powering the ESP32CAM is more difficult.
 
 ## Pin allocation ESP32CAM and others
 | Pin name                  | GPIO     |                                        |
