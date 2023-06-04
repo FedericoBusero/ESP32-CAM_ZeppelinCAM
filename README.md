@@ -38,7 +38,7 @@ Shopping list used in ESP32-S3 setup:
 - Propellors : 30mm For 0.7mm shaft Tail Rotor Spare Parts Propellers : https://www.aliexpress.com/item/4000108963651.html
 - battery: https://www.aliexpress.com/item/1005001860198745.html
 - connector for battery: JST 1.25mm 2 Pin Micro Connector: https://www.aliexpress.com/item/33027366342.html
-- balloon: https://www.ballonsupermarkt-onlineshop.de/folienballons/folienballons-ungefullt/luftballons-aus-folie-grosse-buchstaben-100-cm/buchstaben-luftballons-aus-folie-silber-100-cm.html
+- balloon: character I from the alphabet: https://www.ballonsupermarkt-onlineshop.de/folienballons/folienballons-ungefullt/luftballons-aus-folie-grosse-buchstaben-100-cm/buchstaben-luftballons-aus-folie-silber-100-cm.html
 
 The parts for ESP32CAM are similar, but remark that powering the ESP32CAM is more difficult.
 
