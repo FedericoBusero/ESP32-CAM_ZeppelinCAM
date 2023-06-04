@@ -32,6 +32,7 @@ Motors
 
 Shopping list used in ESP32-S3 setup:
 - motors: 4 * 8mm Coreless DC Motor : https://www.aliexpress.com/item/32871146089.html
+- h-bridge : DRV8833 : https://www.aliexpress.com/item/4000051647999.html
 - Propellors : 30mm For 0.7mm shaft Tail Rotor Spare Parts Propellers : https://www.aliexpress.com/item/4000108963651.html
 - battery: https://www.aliexpress.com/item/1005001860198745.html
 - connector for battery: JST 1.25mm 2 Pin Micro Connector: https://www.aliexpress.com/item/33027366342.html
