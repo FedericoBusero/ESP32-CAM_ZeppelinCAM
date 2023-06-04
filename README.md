@@ -1,5 +1,7 @@
 # ESP32-CAM_ZeppelinCAM
 ESP32CAM: Control motors and servo and stream video of a mini Blimp/Zeppelin to your browser using ESP32CAM or XIAO ESP32S3 Sense. The motors are controlled by one slider and one joystick.
+![zeppelincam_makerfair_gent.jpg](zeppelincam_makerfair_gent.jpg "ZeppelinCAM")
+
 
 ## Communication
 - WifiPoint / SoftAP
