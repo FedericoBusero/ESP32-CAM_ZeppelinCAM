@@ -3,14 +3,6 @@ ESP32CAM: Control motors and servo and send a video stream from a mini Blimp/Zep
 
 ![zeppelincam_makerfair_gent.jpg](zeppelincam_makerfair_gent.jpg "ZeppelinCAM")
 
-
-## Communication
-- WifiPoint / SoftAP
-- SSID = BlimpCam- + 4 last hexadecimal values of the Wifi-MAC address of the ESP32 chip
-- Wifi-password: 12345678
-- App: browser (Chrome, Firefox, safari, ...)
-- URL : http://192.168.4.1 of http://z.be
-
 ## Browser User interface 
 ![Blimp_Zeppelin_cam_xiao_esp32s3_joystick.jpg](Blimp_Zeppelin_cam_xiao_esp32s3_joystick.jpg "ZeppelinCAM user interface")
 
@@ -20,6 +12,13 @@ ESP32CAM: Control motors and servo and send a video stream from a mini Blimp/Zep
 - Joystick: controls
   - left/right: servo and/or h-bridge
   - up: forward motor. Remark only the upper part is used, the zeppelin can only move forward (not backward)
+
+## Communication
+- WifiPoint / SoftAP
+- SSID = BlimpCam- + 4 last hexadecimal values of the Wifi-MAC address of the ESP32 chip
+- Wifi-password: 12345678
+- App: browser (Chrome, Firefox, safari, ...)
+- URL : http://192.168.4.1 of http://z.be
 
 ## Hardware
 It has been developped and tested on following platforms, but it is easy to adapt for other chips:
