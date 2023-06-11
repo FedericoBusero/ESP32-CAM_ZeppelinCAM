@@ -64,7 +64,7 @@ In case you want to test on an ESP32 chip without camera, uncomment the definiti
 
 ## Arduino libraries & version
 - ESP32 Arduino board version 2.0.8
-- Install following libraries in the Arduin IDE Library manager
+- Install following libraries in the Arduino IDE Library manager
   - AsyncTCP: version 1.1.4 by dvarrel
   - ArduinoWebsockets version 0.5.3 by Gil Maimon
   - ESPAsyncWebSrv, version 1.2.6 by dvarrel
