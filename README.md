@@ -68,7 +68,7 @@ Here you can see the wiring, the components are not identical but the concept sh
 - Install following libraries in the Arduino IDE Library manager
   - AsyncTCP: version 1.1.4 by dvarrel
   - ArduinoWebsockets version 0.5.3 by Gil Maimon
-  - ESPAsyncWebSrv, version 1.2.6 by dvarrel
+  - ESPAsyncWebSrv, version 1.2.7 by dvarrel
 
 ## Inspiration
 This project has been created in collaboration with MasynMachien who has lots of experience in building light weight blimps/zeppelins.
