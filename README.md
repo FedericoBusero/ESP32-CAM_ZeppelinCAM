@@ -50,7 +50,7 @@ The parts for ESP32CAM are similar, but remark that powering the ESP32CAM is mor
 | hbridgePinA & hbridgePinB | 13 & 14  | H-bridge for left/right steering motor |
 | turnPin                   |      12  | Left/right steering servo              |
 
-In case you want to test on an ESP32 chip without camera, uncomment the definition of USE_CAMERA
+In case you want to test on an ESP32 chip without camera, remove the definition of USE_CAMERA
 
 ## Pin allocation XIAO ESP32S3 Sense
 Here you can see the wiring, the components are not identical but the concept should be clear.
