@@ -58,10 +58,10 @@ Here you can see the wiring, the components are not identical but the concept sh
 
 | Pin name                  | Pin     |                                        |
 | ------------------------- | ------- | -------------------------------------- |
-| fwdPin                    |      D2 | Motor forward                          |
-| upPin                     |      D5 | Motor up                               |
-| hbridgePinA & hbridgePinB | D3 & D4 | H-bridge for left/right steering motor |
-| turnPin                   |      D1 | Left/right steering servo              |
+| fwdPin                    |      D0 | Motor forward                          |
+| upPin                     |      D1 | Motor up                               |
+| hbridgePinA & hbridgePinB | D4 & D5 | H-bridge for left/right steering motor |
+| turnPin                   |     D10 | Left/right steering servo              |
 
 ## Arduino libraries & version
 - ESP32 Arduino board version 2.0.8
