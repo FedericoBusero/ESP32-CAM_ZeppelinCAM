@@ -53,14 +53,15 @@ The parts for ESP32CAM are similar, but remark that powering the ESP32CAM is mor
 In case you want to test on an ESP32 chip without camera, uncomment the definition of USE_CAMERA
 
 ## Pin allocation XIAO ESP32S3 Sense
+Here you can see the wiring, the components are not identical but the concept should be clear.
+![zeppelincam_fritzing_xiao_s3_.jpg](zeppelincam_fritzing_xiao_s3_.jpg "ZeppelinCAM wiring")
+
 | Pin name                  | Pin     |                                        |
 | ------------------------- | ------- | -------------------------------------- |
 | fwdPin                    |      D2 | Motor forward                          |
 | upPin                     |      D5 | Motor up                               |
 | hbridgePinA & hbridgePinB | D3 & D4 | H-bridge for left/right steering motor |
 | turnPin                   |      D1 | Left/right steering servo              |
-
-
 
 ## Arduino libraries & version
 - ESP32 Arduino board version 2.0.8
