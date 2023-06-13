@@ -71,9 +71,6 @@ Here you can see the wiring, the components are not identical but the concept sh
   - ESPAsyncWebSrv, version 1.2.6 by dvarrel
 
 ## Inspiration
-I got inspired by following examples
-- The ESP32 Camera example CameraWebServer
-- [ESP32-CAM_TANK van PepeTheFroggie](https://github.com/PepeTheFroggie/ESP32CAM_RCTANK)
-- [RobotZero One: ESP32-CAM-rc-car](https://robotzero.one/esp32-cam-rc-car/) the software can be found here:  https://github.com/robotzero1/esp32cam-rc-car
-- [Cellphone controlled RC car](https://github.com/neonious/lowjs_esp32_examples/tree/master/neonious_one/cellphone_controlled_rc_car) 
-- the joystick is based on [Kirupa: Create a Draggable Element in JavaScript](https://www.kirupa.com/html5/drag.htm)
+This project has been created in collaboration with MasynMachien who has lots of experience in building light weight blimps/zeppelins.
+
+More info: https://www.instructables.com/member/masynmachien/ 
