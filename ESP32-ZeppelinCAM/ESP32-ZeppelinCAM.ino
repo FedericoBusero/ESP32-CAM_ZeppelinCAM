@@ -35,11 +35,11 @@ DNSServer dnsServer;
 #ifdef ARDUINO_XIAO_ESP32S3
 #define CAMERA_MODEL_XIAO_ESP32S3 // Has PSRAM
 
-const int fwdPin = D2;  //Forward Motor Pin
-const int turnPin = D1;  //Steering Servo Pin
-const int upPin = D5;  // Up Pin
-const int hbridgePinA = D3; // H-bridge pin A
-const int hbridgePinB = D4; // H-bridge pin B
+const int fwdPin = D0;  //Forward Motor Pin
+const int turnPin = D10;  //Steering Servo Pin
+const int upPin = D1;  // Up Pin
+const int hbridgePinA = D4; // H-bridge pin A
+const int hbridgePinB = D5; // H-bridge pin B
 
 #define PIN_LED_DIGIT LED_BUILTIN
 #define LED_ON LOW
