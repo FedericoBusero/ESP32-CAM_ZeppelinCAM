@@ -11,7 +11,7 @@ ESP32CAM: Control motors and servo and send a video stream from a mini Blimp/Zep
 - slider: control up motor
 - Joystick: controls
   - left/right: servo and/or h-bridge
-  - up: forward motor. Remark only the upper part is used, the zeppelin can only move forward (not backward)
+  - up: forward motor. Note that only the upper part is used, the zeppelin can only move forward (not backward)
 
 ## Communication
 - WifiPoint / SoftAP
@@ -21,7 +21,7 @@ ESP32CAM: Control motors and servo and send a video stream from a mini Blimp/Zep
 - URL : http://192.168.4.1 of http://z.be
 
 ## Hardware
-It has been developped and tested on following platforms, but it is easy to adapt for other chips:
+It has been developed and tested on following platforms, but it is easy to adapt for other chips:
 - AI-Thinker ESP32CAM
 - XIAO ESP32S3 Sense
 
@@ -35,12 +35,12 @@ Motors
 Shopping list used in ESP32-S3 setup:
 - motors: 4 * 8mm Coreless DC Motor : https://www.aliexpress.com/item/32871146089.html
 - h-bridge : DRV8833 : https://www.aliexpress.com/item/4000051647999.html
-- Propellors : 30mm For 0.7mm shaft Tail Rotor Spare Parts Propellers : https://www.aliexpress.com/item/4000108963651.html
+- Propellers : 30mm For 0.7mm shaft Tail Rotor Spare Parts Propellers : https://www.aliexpress.com/item/4000108963651.html
 - battery: https://www.aliexpress.com/item/1005001860198745.html
 - connector for battery: JST 1.25mm 2 Pin Micro Connector: https://www.aliexpress.com/item/33027366342.html
 - balloon: character I from the alphabet: https://www.ballonsupermarkt-onlineshop.de/folienballons/folienballons-ungefullt/luftballons-aus-folie-grosse-buchstaben-100-cm/buchstaben-luftballons-aus-folie-silber-100-cm.html
 
-The parts for ESP32CAM are similar, but remark that powering the ESP32CAM is more difficult.
+The parts for ESP32CAM are similar, but note that powering the ESP32CAM is more difficult.
 
 ## Pin allocation ESP32CAM and others
 | Pin name                  | GPIO     |                                        |
