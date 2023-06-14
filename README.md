@@ -63,8 +63,9 @@ Here you can see the wiring, the components are not identical but the concept sh
 | hbridgePinA & hbridgePinB | D4 & D5 | H-bridge for left/right steering motor |
 | turnPin                   |     D10 | Left/right steering servo              |
 
-## Arduino libraries & version
+## Compilation in Arduino IDE, libraries & versions
 - ESP32 Arduino board version 2.0.8 or later
+- Select PSRAM: OPI PSRAM
 - Install following libraries in the Arduino IDE Library manager
   - AsyncTCP: version 1.1.4 by dvarrel
   - ArduinoWebsockets version 0.5.3 by Gil Maimon
