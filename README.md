@@ -64,7 +64,7 @@ Here you can see the wiring, the components are not identical but the concept sh
 | turnPin                   |     D10 | Left/right steering servo              |
 
 ## Arduino libraries & version
-- ESP32 Arduino board version 2.0.8
+- ESP32 Arduino board version 2.0.8 or later
 - Install following libraries in the Arduino IDE Library manager
   - AsyncTCP: version 1.1.4 by dvarrel
   - ArduinoWebsockets version 0.5.3 by Gil Maimon
