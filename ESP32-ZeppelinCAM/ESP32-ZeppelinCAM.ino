@@ -164,7 +164,6 @@ bool motors_halt;
 // void analogwrite_attach(uint8_t pin, ledc_channel_t channel)
 void analogwrite_attach(uint8_t pin, int channel)
 {
-  // TODO pinmode OUTPUT, FUNCION_3
   ledcSetup(channel, ANALOGWRITE_FREQUENCY, ANALOGWRITE_RESOLUTION); //channel, freq, resolution
   ledcAttachPin(pin, channel); // pin, channel
 #ifdef DEBUG_SERIAL
@@ -331,7 +330,6 @@ void camera_init()
 void led_init()
 {
 #ifdef PIN_LED_PWM
-  pinMode(PIN_LED_PWM, OUTPUT);
   analogwrite_attach(PIN_LED_PWM, CHANNEL_ANALOGWRITE_LED); // pin, channel
 #endif
 #ifdef PIN_LED_DIGIT
